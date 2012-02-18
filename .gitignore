@@ -1,5 +1,6 @@
 .bundle/
 .rvmrc
+Gemfile.lock
 log/*.log
 pkg/
 test/dummy/db/*.sqlite3
