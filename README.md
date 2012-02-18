@@ -37,7 +37,35 @@ rake db:migrate
 
 ## Usage
 
-To convert a 
+To add a sequential ID to a model, first add an integer column called 
+`sequential_id` to the model (or you many name the column anything you
+like and override the default). For example:
+
+```
+rails generate migration add_sequential_id_to_answers sequential_id:integer
+rake db:migrate
+```
+
+Then, call the `acts_as_sequenced` macro in your model class:
+
+```ruby
+class Answer < ActiveRecord::Base
+  belongs_to :question
+  acts_as_sequenced :on => :question
+end
+```
+
+### Overriding Defaults
+
+If you wish to store the sequential ID in an integer column of a different 
+name, simply specific the column name with the `:column` option:
+
+```ruby
+acts_as_sequenced :on => :question, :column => :custom_sequential_id
+```
+
+If you omit the `:on` option, Sequenced will use a global sequence counter
+for the model type not scoped to any particular parent object.
 
 ## License
 
