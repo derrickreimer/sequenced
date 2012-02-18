@@ -23,13 +23,17 @@ end
 ## Installation
 
 1. Add the gem to your Gemfile:
-    
-    gem 'sequenced'
+
+```    
+gem 'sequenced'
+```
     
 2. Install and run migrations:
 
-    rails generate sequenced
-    rake db:migrate
+```
+rails generate sequenced
+rake db:migrate
+```
 
 ## Usage
 
