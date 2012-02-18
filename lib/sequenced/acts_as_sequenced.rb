@@ -41,24 +41,6 @@ module Sequenced
         
         # Include instance & singleton methods
         include Sequenced::ActsAsSequenced::InstanceMethods
-        extend  Sequenced::ActsAsSequenced::SingletonMethods
-      end
-    end
-    
-    module SingletonMethods
-      # Public: Fetch record by sequential id within a given scope
-      #
-      # sequencer  - The Object on which the record is sequenced
-      # id         - The Integer sequential id of the desired record
-      #
-      # Examples
-      #
-      #   answer = Answer.find_by_sequential_id(3)
-      #
-      # Returns an Object if the record exists; otherwise, returns nil.
-      def find_by_sequential_id(sequencer, id)
-        # TODO: Implement this method
-        nil
       end
     end
     
@@ -68,8 +50,9 @@ module Sequenced
       # defined.
       #
       # Returns nothing.
-      # Raises Sequenced::SequencedError if either the scope object or
-      #   sequential ID column do not exist.
+      # Raises Sequenced::SequencedError if the scope object or
+      #   sequential ID column do not exist or if the sequence advancement
+      #   fails.
       def set_sequential_id
         on = self.class.sequenced_on
         column = self.class.sequenced_column
@@ -80,7 +63,7 @@ module Sequenced
         end
         
         unless self.send(column).is_a?(Integer)
-          sequential_id = Sequenced::Sequence.advance(sequencer, self.class.to_s)
+          sequential_id = Sequenced::Sequence.advance(self.class.to_s, sequencer)
         end
       end
       

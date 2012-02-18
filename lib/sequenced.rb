@@ -4,8 +4,6 @@ require 'sequenced/exceptions'
 require 'sequenced/acts_as_sequenced'
 
 module Sequenced
-  mattr_accessor :app_root
-  
   def self.setup
     yield self
   end
