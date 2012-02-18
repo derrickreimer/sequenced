@@ -22,13 +22,13 @@ end
 
 ## Installation
 
-1. Add the gem to your Gemfile:
+First, add the gem to your Gemfile:
 
 ```    
 gem 'sequenced'
 ```
     
-2. Install and run migrations:
+Then, install and run migrations:
 
 ```
 rails generate sequenced
