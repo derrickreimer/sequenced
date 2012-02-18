@@ -1,4 +1,5 @@
 require 'active_support/dependencies'
+require 'active_support/core_ext/class/attribute_accessors'
 require 'sequenced/exceptions'
 require 'sequenced/acts_as_sequenced'
 

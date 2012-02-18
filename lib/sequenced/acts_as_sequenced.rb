@@ -1,6 +1,3 @@
-# Required for cattr_accessor macro
-require 'active_support/core_ext/class/attribute_accessors'
-
 module Sequenced
   module ActsAsSequenced
     def self.included(base)
@@ -8,11 +5,12 @@ module Sequenced
     end
     
     module ClassMethods
-      # Defines ActiveRecord callbacks to set a sequential ID scoped 
+      # Public: Defines ActiveRecord callbacks to set a sequential ID scoped 
       # on a specific class.
       #
       # options - The Hash of options for configuration:
-      #           :on     - The Class on which the sequential ID
+      #           :on     - The Symbol representing the object (or instance method
+      #                     that returns the object) on which the sequential ID 
       #                     should be scoped (default: nil)
       #           :column - The Symbol representing the column
       #                     (or method) that stores the sequential ID 
@@ -21,7 +19,8 @@ module Sequenced
       # Examples
       #   
       #   class Answer < ActiveRecord::Base
-      #     acts_as_sequenced :on => Question, :column => :custom_sequential_id
+      #     belongs_to :question
+      #     acts_as_sequenced :on => :question
       #   end
       #
       # Returns nothing.
@@ -50,17 +49,39 @@ module Sequenced
       # the sequential ID column if the sequential id is not already
       # defined.
       #
-      # Returns nothing. 
-      def set_sequential_id(options = {})
+      # Returns nothing.
+      # Raises Sequenced::SequencedError if either the scope object or
+      #   sequential ID column do not exist 
+      def set_sequential_id
+        on = self.class.sequenced_on
         column = self.class.sequenced_column
+        sequencer = on.nil? ? get_sequencer(on) : nil
         
         unless self.respond_to?(column)
-          raise Sequenced::AttributeError.new("Method ##{column} not found")
+          raise Sequenced::SequencedError.new("The column specified does not exist")
         end
         
-        if self.send(column).blank?
-          
+        unless self.send(column).is_a?(Integer)
+          sequential_id = Sequenced::Sequence.advance(sequencer, self.class.to_s)
         end
+      end
+      
+      def get_sequencer(key)
+        unless self.respond_to?(key)
+          raise Sequenced::SequencedError.new("Object specificed for :on is not defined")
+        end
+        
+        sequencer = self.send(key)
+        
+        unless sequencer.present?
+          raise Sequenced::SequencedError.new("Object specificed for :on does not exist")
+        end
+        
+        unless sequencer.persisted?
+          raise Sequenced::SequencedError.new("Object specificed for :on is not persisted")
+        end
+        
+        return sequencer
       end
     end
   end

@@ -2,6 +2,6 @@ module Sequenced
   class SequencedError < RuntimeError
   end
   
-  class AttributeError < SequencedError
+  class NoMethodError < SequencedError
   end
 end
