@@ -1,15 +1,38 @@
 # Sequenced
 
-Sequenced is a simple Rails 3 plugin that allows you to generate
-scoped sequential IDs for ActiveRecord models.
+Sequenced is a simple Rails 3 engine that generates scoped sequential 
+IDs for ActiveRecord models. It's generally a bad practice to expose your 
+database primary keys to the world in your URLs. Sequenced allows you to 
+mitigate this problem by sequencing your models within a particular scope. 
+
+For example, given a Question model that has many Answers, it makes sense
+to number answers sequentially in the scope of the the question. You can
+achieve this with Sequenced in one line of code:
+
+    class Question < ActiveRecord::Base
+      has_many :answers
+    end
+
+    class Answer < ActiveRecord::Base
+      belongs_to :question
+      acts_as_sequenced :on => :question
+    end
+
 
 ## Installation
 
-_TODO: Add installation steps_
+1. Add the gem to your Gemfile:
+    
+    gem 'sequenced'
+    
+2. Install and run migrations:
+
+    rails generate sequenced
+    rake db:migrate
 
 ## Usage
 
-_TODO: Add usage steps_
+To convert a 
 
 ## License
 
