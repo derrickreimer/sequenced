@@ -39,8 +39,26 @@ module Sequenced
         # Validate uniqueness of sequential ID
         validates self.sequenced_column, :uniqueness => { :scope => self.sequenced_on }
         
-        # Include instance methods
+        # Include instance & singleton methods
         include Sequenced::ActsAsSequenced::InstanceMethods
+        extend  Sequenced::ActsAsSequenced::SingletonMethods
+      end
+    end
+    
+    module SingletonMethods
+      # Public: Fetch record by sequential id within a given scope
+      #
+      # sequencer  - The Object on which the record is sequenced
+      # id         - The Integer sequential id of the desired record
+      #
+      # Examples
+      #
+      #   answer = Answer.find_by_sequential_id(3)
+      #
+      # Returns an Object if the record exists; otherwise, returns nil.
+      def find_by_sequential_id(sequencer, id)
+        # TODO: Implement this method
+        nil
       end
     end
     
@@ -51,14 +69,14 @@ module Sequenced
       #
       # Returns nothing.
       # Raises Sequenced::SequencedError if either the scope object or
-      #   sequential ID column do not exist 
+      #   sequential ID column do not exist.
       def set_sequential_id
         on = self.class.sequenced_on
         column = self.class.sequenced_column
-        sequencer = on.nil? ? get_sequencer(on) : nil
+        sequencer = on.nil? ? load_sequencer(on) : nil
         
         unless self.respond_to?(column)
-          raise Sequenced::SequencedError.new("The column specified does not exist")
+          raise Sequenced::SequencedError.new("The specified sequence column does not exist")
         end
         
         unless self.send(column).is_a?(Integer)
@@ -66,19 +84,27 @@ module Sequenced
         end
       end
       
-      def get_sequencer(key)
+      # Internal: Fetches the sequencer object.
+      #
+      # key - The Symbol representation of the method that returns
+      #       the sequencer object
+      #
+      # Returns the sequencer Object.
+      # Raises Sequenced::SequencedError if the method is not defined, 
+      #   does not exist, or is not persisted.
+      def load_sequencer(key)
         unless self.respond_to?(key)
-          raise Sequenced::SequencedError.new("Object specificed for :on is not defined")
+          raise Sequenced::SequencedError.new("Sequencer is not defined")
         end
         
         sequencer = self.send(key)
         
         unless sequencer.present?
-          raise Sequenced::SequencedError.new("Object specificed for :on does not exist")
+          raise Sequenced::SequencedError.new("Sequencer does not exist")
         end
         
         unless sequencer.persisted?
-          raise Sequenced::SequencedError.new("Object specificed for :on is not persisted")
+          raise Sequenced::SequencedError.new("Sequencer is not persisted")
         end
         
         return sequencer
