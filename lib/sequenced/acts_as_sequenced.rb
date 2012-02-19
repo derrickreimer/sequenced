@@ -72,31 +72,30 @@ module Sequenced
         end
         
         # Fetch the next ID unless it is already defined
-        unless self.send(column).is_a?(Integer) && sequential_id_is_unique?
-          begin
-            self.send(:"#{column}=", next_sequential_id)
-          end until sequential_id_is_unique?
-        end
+        self.send(:"#{column}=", next_sequential_id) until sequential_id_is_unique?
       end
       
       # Internal: Obtain the next sequential ID
       #
       # Returns Integer.
+      # Raises Sequenced::InvalidAttributeError if the last sequential ID is not
+      #   an Integer.
       def next_sequential_id
         scope    = self.class.sequenced_options[:scope]
         column   = self.class.sequenced_options[:column]
         start_at = self.class.sequenced_options[:start_at]
         
-        q = self.class.order("#{column.to_s} DESC")
+        q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
         q = q.where(scope => self.send(scope)) if scope.is_a?(Symbol)
-        return start_at unless last_record = q.first
         
+        return start_at unless last_record = q.first
         last_id = last_record.send(column)
-        if last_id.is_a?(Integer)
-          last_id + 1 > start_at ? last_id + 1 : start_at
-        else
-          start_at
+        
+        unless last_id.is_a?(Integer)
+          raise Sequenced::InvalidAttributeError("Last sequential ID is not an Integer")
         end
+        
+        last_id + 1 > start_at ? last_id + 1 : start_at
       end
       
       # Internal: Checks the uniqueness of the sequential ID.
@@ -105,9 +104,12 @@ module Sequenced
       def sequential_id_is_unique?
         scope  = self.class.sequenced_options[:scope]
         column = self.class.sequenced_options[:column]
-        q = self.class.where(column => self.send(column))
+        return false unless self.send(column).is_a?(Integer)
+        
+        q = self.class.unscoped.where(column => self.send(column))
         q = q.where(scope => self.send(scope)) if scope.is_a?(Symbol)
         q = q.where("NOT id = ?", self.id) if self.persisted?
+        
         q.count > 0 ? false : true
       end
     end
