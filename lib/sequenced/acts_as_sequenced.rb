@@ -30,11 +30,6 @@ module Sequenced
         # Remove extraneous options
         options.slice!(:scope, :column, :start_at)
         
-        # Ensure scope is valid
-        # if options[:scope] && !self.instance_methods.include?(options[:scope])
-        #   raise Sequenced::SequencedError.new("Scope is invalid")
-        # end
-        
         # Set defaults
         options[:column]   ||= :sequential_id
         options[:start_at] ||= 1
@@ -45,20 +40,7 @@ module Sequenced
         
         # Specify ActiveRecord callback
         before_save :set_sequential_id
-        
-        # Validate uniqueness of sequential ID within the given scope
-        # if options[:scope]
-        #   validates options[:column], :uniqueness => { :scope => options[:scope] }
-        # else
-        #   validates options[:column], :uniqueness => true
-        # end
-        
-        # Include instance methods
         include Sequenced::ActsAsSequenced::InstanceMethods
-      end
-      
-      def sequence_scoped?
-        self.sequenced_options[:scope].present?
       end
     end
     
@@ -72,7 +54,12 @@ module Sequenced
       #   sequential ID column do not exist or if the sequence advancement
       #   fails.
       def set_sequential_id
+        scope  = self.class.sequenced_options[:scope]
         column = self.class.sequenced_options[:column]
+        
+        if scope.present? && !self.respond_to?(scope)
+          raise Sequenced::InvalidScopeError.new("Scope method does not exist")
+        end
         
         unless self.respond_to?(column)
           raise Sequenced::SequencedError.new("Sequential ID column does not exist")
@@ -94,8 +81,9 @@ module Sequenced
         column   = self.class.sequenced_options[:column]
         start_at = self.class.sequenced_options[:start_at]
         
-        last_record = self.class.where(scope => self.send(scope)).order("#{column.to_s} DESC").first
-        return start_at if last_record.nil?
+        q = self.class.order("#{column.to_s} DESC")
+        q = q.where(scope => self.send(scope)) if scope.is_a?(Symbol)
+        return start_at unless last_record = q.first
         
         last_id = last_record.send(column)
         if last_id.is_a?(Integer)
@@ -111,7 +99,10 @@ module Sequenced
       def sequential_id_is_unique?
         scope  = self.class.sequenced_options[:scope]
         column = self.class.sequenced_options[:column]
-        self.class.where(scope => self.send(scope), column => self.send(column)).count > 0 ? false : true
+        q = self.class.where(column => self.send(column))
+        q = q.where(scope => self.send(scope)) if scope.is_a?(Symbol)
+        q = q.where("NOT id = ?", self.id) if self.persisted?
+        q.count > 0 ? false : true
       end
     end
   end

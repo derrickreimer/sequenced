@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  account: 
+  name: MyString
+  custom_sequential_id: 1
+
+two:
+  account: 
+  name: MyString
+  custom_sequential_id: 1

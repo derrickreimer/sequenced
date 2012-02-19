@@ -1,7 +1,4 @@
 module Sequenced
-  class SequencedError < RuntimeError
-  end
-  
-  class NoMethodError < SequencedError
-  end
+  class SequencedError < RuntimeError; end
+  class InvalidScopeError < SequencedError; end
 end
