@@ -87,6 +87,11 @@ integer, simply set the `:start_at` option:
 acts_as_sequenced :scope => :question_id, :start_at => 1000
 ```
 
+### Indexing the sequential ID column
+
+For optimal performance, it's a good idea to index the sequential ID column
+on sequenced models.
+
 ## Example
 
 Suppose you have a question model that has many answers. This example 
