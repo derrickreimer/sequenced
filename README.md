@@ -58,7 +58,7 @@ end
 ### Storing the Sequential ID in a Custom Column
 
 By default, Sequenced uses the `sequential_id` column. If you wish to store the 
-sequential ID in different integer column, simply specific the column name with 
+sequential ID in different integer column, simply specify the column name with 
 the `:column` option:
 
 ```ruby
