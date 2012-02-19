@@ -1,6 +1,6 @@
 # Sequenced
 
-Sequenced is a simple Rails 3 engine that generates scoped sequential 
+Sequenced is a simple Rails 3 plugin that generates scoped sequential 
 IDs for ActiveRecord models. The sequential ID does not replace the database
 primary key, but rather adds another way to retrieve the object within the 
 scope of another attribute.
