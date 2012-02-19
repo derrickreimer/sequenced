@@ -1,3 +1,5 @@
+require 'active_support/core_ext/hash/slice'
+
 module Sequenced
   module ActsAsSequenced
     def self.included(base)
@@ -9,41 +11,47 @@ module Sequenced
       # on a specific class.
       #
       # options - The Hash of options for configuration:
-      #           :on     - The Symbol representing the object (or instance method
-      #                     that returns the object) on which the sequential ID 
-      #                     should be scoped (default: nil)
-      #           :column - The Symbol representing the column
-      #                     (or method) that stores the sequential ID 
-      #                     (default: :sequential_id)
+      #           :scope           - The Symbol representing the object on 
+      #                              which the sequential ID should be scoped 
+      #                              (default: nil)
+      #           :column          - The Symbol representing the column
+      #                              (or method) that stores the sequential ID 
+      #                              (default: :sequential_id)
+      #           :foreign_key     - The Symbol representing the foreign key
+      #                              column of the scope model (default: {scope}_id)
+      #           :skip_validation - The Boolean value indicating whether
+      #                              uniqueness validations should be skipped
+      #                              (default: false)
       #
       # Examples
       #   
       #   class Answer < ActiveRecord::Base
       #     belongs_to :question
-      #     acts_as_sequenced :on => :question
+      #     acts_as_sequenced :scope => :question
       #   end
       #
       # Returns nothing.
       def acts_as_sequenced(options = {})
-        # Create sequenced column accessor and assign option or default
-        cattr_accessor :sequenced_on
-        self.sequenced_on = options[:on] || nil
+        # Remove extraneous options
+        options.slice!(:scope, :column, :foreign_key, :skip_validation)
         
-        # Create sequenced column accessor and assign option or default
-        cattr_accessor :sequenced_column
-        self.sequenced_column = options[:column] || :sequential_id
+        # Set defaults
+        options[:scope] ||= nil
+        options[:column] ||= :sequential_id
+        options[:foreign_key] ||= :"#{self.sequence_scope.to_s}_id"
+        options[:skip_validation] ||= false
+        
+        # Create class accessor for sequenced options
+        cattr_accessor :sequenced_options
+        self.sequenced_options = options
         
         # Define ActiveRecord callback
         before_save :set_sequential_id
         
         # Validate uniqueness of sequential ID within the given scope
-        #
-        # Removed for now, since this requires knowledge of the foreign key
-        # for the association. This is too limiting, since there is no
-        # need to absolutely require an association be set up.
-        # Users are welcome to manually add this validation to their models.
-        #
-        # validates self.sequenced_column, :uniqueness => { :scope => foreign_key }
+        unless options[:skip_validation]
+          validates options[:column], :uniqueness => { :scope => options[:foreign_key] }
+        end
         
         # Include instance & singleton methods
         include Sequenced::ActsAsSequenced::InstanceMethods
@@ -60,45 +68,56 @@ module Sequenced
       #   sequential ID column do not exist or if the sequence advancement
       #   fails.
       def set_sequential_id
-        on = self.class.sequenced_on
-        column = self.class.sequenced_column
-        sequencer = on.nil? ? nil : load_sequencer(on)
+        column    = self.class.sequenced_options[:column]
+        sequencer = load_sequencer
         
         unless self.respond_to?(column)
           raise Sequenced::SequencedError.new("Sequential ID column does not exist")
         end
         
         # Fetch the next ID unless it is already defined
-        unless self.send(column).is_a?(Integer)
-          sequential_id = Sequenced::Sequence.advance(self.class.to_s, sequencer)
-          self.send(:"#{column}=", sequential_id)
+        unless self.send(column).is_a?(Integer) && sequential_id_is_unique?
+          begin
+            sequential_id = Sequenced::Sequence.advance(self.class.to_s, sequencer)
+            self.send(:"#{column}=", sequential_id)
+          end until sequential_id_is_unique?
         end
       end
       
       # Internal: Fetches the sequencer object.
       #
-      # key - The Symbol representation of the method that returns
-      #       the sequencer object
-      #
-      # Returns the sequencer Object.
+      # Returns the sequencer Object or nil.
       # Raises Sequenced::SequencedError if the method is not defined, 
       #   does not exist, or is not persisted.
-      def load_sequencer(key)
-        unless self.respond_to?(key)
-          raise Sequenced::SequencedError.new("Sequencer column or method ##{key.to_s} does not exist")
-        end
+      def load_sequencer
+        return unless scope = self.class.sequenced_options[:scope]
         
-        sequencer = self.send(key)
-        
-        unless sequencer.present?
+        unless self.respond_to?(scope)
           raise Sequenced::SequencedError.new("Sequencer column or method ##{key.to_s} is undefined")
         end
         
+        sequencer = self.send(scope)
+        
+        unless sequencer.present?
+          raise Sequenced::SequencedError.new("Sequencer object ##{key.to_s} is blank")
+        end
+        
         unless sequencer.respond_to?(:id) && sequencer.id.present?
-          raise Sequenced::SequencedError.new("Sequencer object #id is undefined")
+          raise Sequenced::SequencedError.new("Sequencer object #id is blank")
         end
         
         return sequencer
+      end
+      
+      # Internal: Checks the uniqueness of the sequential ID.
+      #
+      # Returns Boolean status of uniqueness.
+      def sequential_id_is_unique?
+        sid_column = self.class.sequenced_options[:column]
+        sid_value  = self.send(id_column)
+        fk_column = self.class.sequenced_options[:foreign_key]
+        fk_value  = self.send(fk_column)
+        self.class.where(sid_column => sid_value, fk_column => fk_value).count > 0 ? false : true
       end
     end
   end

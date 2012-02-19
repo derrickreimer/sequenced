@@ -16,7 +16,7 @@ end
 
 class Answer < ActiveRecord::Base
   belongs_to :question
-  acts_as_sequenced :on => :question
+  acts_as_sequenced :scope => :question
 end
 ```
 
@@ -51,27 +51,28 @@ Then, call the `acts_as_sequenced` macro in your model class:
 ```ruby
 class Answer < ActiveRecord::Base
   belongs_to :question
-  acts_as_sequenced :on => :question
+  acts_as_sequenced :scope => :question
 end
 ```
 
-### Storing the Sequential ID in a Custom Column
+### Manually Setting Sequential ID Column
 
 By default, Sequenced uses the `sequential_id` column. If you wish to store the 
 sequential ID in different integer column, simply specify the column name with 
 the `:column` option:
 
 ```ruby
-acts_as_sequenced :on => :question, :column => :custom_sequential_id
+acts_as_sequenced :scope => :question, :column => :custom_sequential_id
 ```
 
-### Validating Uniqueness of Sequential ID
+### Skipping Uniqueness Validations
 
-Sequenced should always produce a valid, unique sequential ID. However, to play it
-safe, you may wish to define a uniqueness validation on your model. For example:
+By default, Sequenced validates the uniqueness of the generated sequential ID and
+ensures that it's unique. Although not recommended, Sequenced allows you to skip
+validation by setting the `:skip_validation` option:
 
 ```ruby
-validates :sequential_id, :uniqueness => { :scope => :question_id }
+acts_as_sequenced :scope => :question, :skip_validation => true
 ```
 
 ## License
