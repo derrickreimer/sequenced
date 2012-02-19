@@ -55,17 +55,15 @@ class Answer < ActiveRecord::Base
 end
 ```
 
-### Overriding Defaults
+### Storing the Sequential ID in a Custom Column
 
-If you wish to store the sequential ID in an integer column of a different 
-name, simply specific the column name with the `:column` option:
+By default, Sequenced uses the `sequential_id` column. If you wish to store the 
+sequential ID in different integer column, simply specific the column name with 
+the `:column` option:
 
 ```ruby
 acts_as_sequenced :on => :question, :column => :custom_sequential_id
 ```
-
-If you omit the `:on` option, Sequenced will use a global sequence counter
-for the model type not scoped to any particular parent object.
 
 ## License
 

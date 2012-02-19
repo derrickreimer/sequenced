@@ -1,7 +1,6 @@
 module Sequenced
   class Sequence < ActiveRecord::Base
-    # Internal: Advance the sequence safely for a given
-    # sequencer
+    # Internal: Advance the sequence for a given sequencer
     #
     # sequenced_type - A String or Class representing the class
     #                  of the sequenced object
@@ -45,7 +44,12 @@ module Sequenced
           sequence.last_id = next_id
           sequence.save!
         else
-          sequence = Sequence.build(:sequenced_type => sequenced_type, :sequencer => sequencer, :last_id => 1)
+          sequence = self.new(
+            :sequenced_type => sequenced_type, 
+            :sequencer_id   => sequencer.id,
+            :sequencer_type => sequencer.class.to_s, 
+            :last_id        => 1
+          )
           sequence.save!
           next_id = 1
         end

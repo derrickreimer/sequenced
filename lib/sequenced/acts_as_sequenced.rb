@@ -36,8 +36,14 @@ module Sequenced
         # Define ActiveRecord callback
         before_save :set_sequential_id
         
-        # Validate uniqueness of sequential ID
-        validates self.sequenced_column, :uniqueness => { :scope => self.sequenced_on }
+        # Validate uniqueness of sequential ID within the given scope
+        #
+        # Removed for now, since this requires knowledge of the foreign key
+        # for the association. This is too limiting, since there is no
+        # need to absolutely require an association be set up.
+        # Users are welcome to manually add this validation to their models.
+        #
+        # validates self.sequenced_column, :uniqueness => { :scope => foreign_key }
         
         # Include instance & singleton methods
         include Sequenced::ActsAsSequenced::InstanceMethods
@@ -56,14 +62,16 @@ module Sequenced
       def set_sequential_id
         on = self.class.sequenced_on
         column = self.class.sequenced_column
-        sequencer = on.nil? ? load_sequencer(on) : nil
+        sequencer = on.nil? ? nil : load_sequencer(on)
         
         unless self.respond_to?(column)
-          raise Sequenced::SequencedError.new("The specified sequence column does not exist")
+          raise Sequenced::SequencedError.new("Sequential ID column does not exist")
         end
         
+        # Fetch the next ID unless it is already defined
         unless self.send(column).is_a?(Integer)
           sequential_id = Sequenced::Sequence.advance(self.class.to_s, sequencer)
+          self.send(:"#{column}=", sequential_id)
         end
       end
       
@@ -77,17 +85,17 @@ module Sequenced
       #   does not exist, or is not persisted.
       def load_sequencer(key)
         unless self.respond_to?(key)
-          raise Sequenced::SequencedError.new("Sequencer is not defined")
+          raise Sequenced::SequencedError.new("Sequencer column or method ##{key.to_s} does not exist")
         end
         
         sequencer = self.send(key)
         
         unless sequencer.present?
-          raise Sequenced::SequencedError.new("Sequencer does not exist")
+          raise Sequenced::SequencedError.new("Sequencer column or method ##{key.to_s} is undefined")
         end
         
-        unless sequencer.persisted?
-          raise Sequenced::SequencedError.new("Sequencer is not persisted")
+        unless sequencer.respond_to?(:id) && sequencer.id.present?
+          raise Sequenced::SequencedError.new("Sequencer object #id is undefined")
         end
         
         return sequencer
