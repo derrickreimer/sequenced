@@ -1,4 +1,5 @@
 require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/class/attribute_accessors'
 
 module Sequenced
   module ActsAsSequenced
