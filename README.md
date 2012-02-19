@@ -30,18 +30,13 @@ end
 
 ## Installation
 
-First, add the gem to your Gemfile:
+Add the gem to your Gemfile:
+   
+    gem 'sequenced'
 
-```    
-gem 'sequenced'
-```
-    
-Then, install and run migrations:
+Install the gem with bundler:
 
-```
-rails generate sequenced
-rake db:migrate
-```
+    bundle install
 
 ## Usage
 
@@ -49,10 +44,8 @@ To add a sequential ID to a model, first add an integer column called
 `sequential_id` to the model (or you many name the column anything you
 like and override the default). For example:
 
-```
-rails generate migration add_sequential_id_to_answers sequential_id:integer
-rake db:migrate
-```
+    rails generate migration add_sequential_id_to_answers sequential_id:integer
+    rake db:migrate
 
 Then, call the `acts_as_sequenced` macro in your model class:
 
