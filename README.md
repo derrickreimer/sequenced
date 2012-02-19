@@ -65,9 +65,18 @@ the `:column` option:
 acts_as_sequenced :on => :question, :column => :custom_sequential_id
 ```
 
+### Validating Uniqueness of Sequential ID
+
+Sequenced should always produce a valid, unique sequential ID. However, to play it
+safe, you may wish to define a uniqueness validation on your model. For example:
+
+```ruby
+validates :sequential_id, :uniqueness => { :scope => :question_id }
+```
+
 ## License
 
-Copyright 2012 Derrick Reimer
+Copyright &copy; 2012 Derrick Reimer
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
