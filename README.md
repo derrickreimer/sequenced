@@ -90,8 +90,8 @@ acts_as_sequenced :scope => :question_id, :start_at => 1000
 ## Example
 
 Suppose you have a question model that has many answers. This example 
-demonstrates how to use Sequenced to enable access to a resource
-via its sequential ID.
+demonstrates how to use Sequenced to enable access to the nested answer
+resource via its sequential ID.
 
 ```ruby
 # app/models/question.rb
