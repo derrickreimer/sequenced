@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120219174931) do
+ActiveRecord::Schema.define(:version => 20120219175744) do
 
   create_table "accounts", :force => true do |t|
     t.string   "name"
@@ -60,5 +60,15 @@ ActiveRecord::Schema.define(:version => 20120219174931) do
     t.datetime "created_at",    :null => false
     t.datetime "updated_at",    :null => false
   end
+
+  create_table "users", :force => true do |t|
+    t.integer  "account_id"
+    t.string   "name"
+    t.integer  "custom_sequential_id"
+    t.datetime "created_at",           :null => false
+    t.datetime "updated_at",           :null => false
+  end
+
+  add_index "users", ["account_id"], :name => "index_users_on_account_id"
 
 end
