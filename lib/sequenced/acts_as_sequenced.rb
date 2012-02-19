@@ -51,19 +51,24 @@ module Sequenced
       # defined.
       #
       # Returns nothing.
-      # Raises Sequenced::SequencedError if the scope object or
-      #   sequential ID column do not exist or if the sequence advancement
-      #   fails.
+      # Raises Sequenced::InvalidAttributeError if
+      #   1) The specified scope method is undefined,
+      #   2) The specified scope method returns nil, or
+      #   3) The sequential ID column is undefined.
       def set_sequential_id
         scope  = self.class.sequenced_options[:scope]
         column = self.class.sequenced_options[:column]
         
-        if scope.present? && !self.respond_to?(scope)
-          raise Sequenced::InvalidScopeError.new("Scope method does not exist")
+        if scope.present?
+          if !self.respond_to?(scope)
+            raise Sequenced::InvalidAttributeError.new("Method ##{scope.to_s} is undefined")
+          elsif self.send(scope).nil?
+            raise Sequenced::InvalidAttributeError.new("Method ##{scope.to_s} returned nil unexpectedly")
+          end
         end
         
         unless self.respond_to?(column)
-          raise Sequenced::SequencedError.new("Sequential ID column does not exist")
+          raise Sequenced::InvalidAttributeError.new("Method ##{column.to_s} is undefined")
         end
         
         # Fetch the next ID unless it is already defined
