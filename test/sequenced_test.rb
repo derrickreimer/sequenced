@@ -1,5 +1,13 @@
 require 'test_helper'
 
+# Test Models:
+#
+#   Answer       - :scope => :question_id
+#   Invoice      - :scope => :account_id, :start_at => 1000
+#   Order        - :scope => :non_existent_column
+#   User         - :scope => :account_id, :column => :custom_sequential_id
+#   Subscription - no options
+
 class SequencedTest < ActiveSupport::TestCase
   test "sequential_id_default_start_at" do
     question = Question.create
