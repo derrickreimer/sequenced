@@ -3,6 +3,7 @@ require 'test_helper'
 # Test Models:
 #
 #   Answer       - :scope => :question_id
+#   Comment      - :scope => :question_id (with an AR default scope)
 #   Invoice      - :scope => :account_id, :start_at => 1000
 #   Order        - :scope => :non_existent_column
 #   User         - :scope => :account_id, :column => :custom_sequential_id
@@ -88,5 +89,12 @@ class SequencedTest < ActiveSupport::TestCase
     
     assert_equal 10, answer.sequential_id
     assert_equal 11, another_answer.sequential_id
+  end
+  
+  test "model with a default scope for sorting" do
+    question = Question.create
+    (1..3).each { |id| question.comments.create(:sequential_id => id) }
+    comment = question.comments.create
+    assert_equal 4, comment.sequential_id
   end
 end
