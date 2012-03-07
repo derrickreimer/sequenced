@@ -61,14 +61,14 @@ module Sequenced
         
         if scope.present?
           if !self.respond_to?(scope)
-            raise Sequenced::InvalidAttributeError.new("Method ##{scope.to_s} is undefined")
+            raise Sequenced::InvalidAttributeError.new(":scope method ##{scope.to_s} is undefined")
           elsif self.send(scope).nil?
-            raise Sequenced::InvalidAttributeError.new("Method ##{scope.to_s} returned nil unexpectedly")
+            raise Sequenced::InvalidAttributeError.new(":scope method ##{scope.to_s} returned nil unexpectedly")
           end
         end
         
         unless self.respond_to?(column)
-          raise Sequenced::InvalidAttributeError.new("Method ##{column.to_s} is undefined")
+          raise Sequenced::InvalidAttributeError.new(":column method ##{column.to_s} is undefined")
         end
         
         # Fetch the next ID unless it is already defined
@@ -92,7 +92,7 @@ module Sequenced
         last_id = last_record.send(column)
         
         unless last_id.is_a?(Integer)
-          raise Sequenced::InvalidAttributeError("Last sequential ID is not an Integer")
+          raise Sequenced::InvalidAttributeError("The sequential ID column must contain Integer values")
         end
         
         last_id + 1 > start_at ? last_id + 1 : start_at
