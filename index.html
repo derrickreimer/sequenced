@@ -1,0 +1,223 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Sequenced by djreimer</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/djreimer/sequenced">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/djreimer/sequenced/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/djreimer/sequenced/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Sequenced</h1>
+          <p>Generate scoped sequential IDs for ActiveRecord models</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/djreimer">djreimer</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <p>Sequenced is a simple Rails 3 plugin that generates scoped sequential IDs for 
+ActiveRecord models. This gem provides an <code>acts_as_sequenced</code> macro that 
+automatically assigns a unique, sequential ID to each record. This ID is 
+not a replacement for the database primary key, but rather adds another way to 
+retrieve the object without exposing the primary key.</p>
+
+<p>Extracted from the <a href="https://guidekit.com">GuideKit</a> codebase.</p>
+
+<h2>Purpose</h2>
+
+<p>It's generally a bad practice to expose your primary keys to the world 
+in your URLs. However, it is often appropriate to number objects in sequence 
+(in the context of a parent object).</p>
+
+<p>For example, given a Question model that has many Answers, it makes sense
+to number answers sequentially for each individual question. You can achieve 
+this with Sequenced in one line of code:</p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nc">Question</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:answers</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Answer</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:question</span>
+  <span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<h2>Installation</h2>
+
+<p>Add the gem to your Gemfile:</p>
+
+<pre><code>gem 'sequenced'
+</code></pre>
+
+<p>Install the gem with bundler:</p>
+
+<pre><code>bundle install
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>To add a sequential ID to a model, first add an integer column called
+<code>sequential_id</code> to the model (or you many name the column anything you
+like and override the default). For example:</p>
+
+<pre><code>rails generate migration add_sequential_id_to_answers sequential_id:integer
+rake db:migrate
+</code></pre>
+
+<p>Then, call the <code>acts_as_sequenced</code> macro in your model class:</p>
+
+<div class="highlight">
+<pre><span class="k">class</span> <span class="nc">Answer</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:question</span>
+  <span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>The <code>:scope</code> option can be any attribute, but will typically be the foreign
+key of an associated parent object.</p>
+
+<h2>Configuration</h2>
+
+<h3>Overriding the default sequential ID column</h3>
+
+<p>By default, Sequenced uses the <code>sequential_id</code> column and assumes it already 
+exists. If you wish to store the sequential ID in different integer column, 
+simply specify the column name with the <code>:column</code> option:</p>
+
+<div class="highlight">
+<pre><span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span><span class="p">,</span> <span class="ss">:column</span> <span class="o">=&gt;</span> <span class="ss">:my_sequential_id</span>
+</pre>
+</div>
+
+
+<h3>Starting the sequence at a specific number</h3>
+
+<p>By default, Sequenced begins sequences with 1. To start at a different 
+integer, simply set the <code>:start_at</code> option:</p>
+
+<div class="highlight">
+<pre><span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span><span class="p">,</span> <span class="ss">:start_at</span> <span class="o">=&gt;</span> <span class="mi">1000</span>
+</pre>
+</div>
+
+
+<h3>Indexing the sequential ID column</h3>
+
+<p>For optimal performance, it's a good idea to index the sequential ID column
+on sequenced models.</p>
+
+<h2>Example</h2>
+
+<p>Suppose you have a question model that has many answers. This example 
+demonstrates how to use Sequenced to enable access to the nested answer
+resource via its sequential ID.</p>
+
+<div class="highlight">
+<pre><span class="c1"># app/models/question.rb</span>
+<span class="k">class</span> <span class="nc">Question</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">has_many</span> <span class="ss">:answers</span>
+<span class="k">end</span>
+
+<span class="c1"># app/models/answer.rb</span>
+<span class="k">class</span> <span class="nc">Answer</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
+  <span class="n">belongs_to</span> <span class="ss">:question</span>
+  <span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span>
+
+  <span class="c1"># Automatically use the sequential ID in URLs</span>
+  <span class="k">def</span> <span class="nf">to_param</span>
+    <span class="nb">self</span><span class="o">.</span><span class="n">sequential_id</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># config/routes.rb</span>
+<span class="n">resources</span> <span class="ss">:questions</span>
+  <span class="n">resources</span> <span class="ss">:answers</span>
+<span class="k">end</span>
+
+<span class="c1"># app/controllers/answers_controller.rb</span>
+<span class="k">class</span> <span class="nc">AnswersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
+  <span class="n">before_filter</span> <span class="ss">:load_question</span>
+  <span class="n">before_filter</span> <span class="ss">:load_answer</span><span class="p">,</span> <span class="ss">:only</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:edit</span><span class="p">,</span> <span class="ss">:update</span><span class="p">,</span> <span class="ss">:destroy</span><span class="o">]</span>
+
+<span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">load_question</span>
+    <span class="vi">@question</span> <span class="o">=</span> <span class="no">Question</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:question_id</span><span class="o">]</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">load_answer</span>
+    <span class="vi">@answer</span> <span class="o">=</span> <span class="vi">@question</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="ss">:sequential_id</span> <span class="o">=&gt;</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">first</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</pre>
+</div>
+
+
+<p>Now, answers are accessible via their sequential IDs:</p>
+
+<pre><code><a href="http://example.com/questions/5/answers/1">http://example.com/questions/5/answers/1</a>    # Good
+</code></pre>
+
+<p>instead of by their primary keys:</p>
+
+<pre><code><a href="http://example.com/questions/5/answer/32454">http://example.com/questions/5/answer/32454</a>  # Bad
+</code></pre>
+
+<h2>License</h2>
+
+<p>Copyright © 2012 Derrick Reimer</p>
+
+<p>Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:</p>
+
+<p>The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.</p>
+
+<p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+  </body>
+</html>
