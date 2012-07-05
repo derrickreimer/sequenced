@@ -51,7 +51,7 @@ module Sequenced
       # defined.
       #
       # Returns nothing.
-      # Raises Sequenced::InvalidAttributeError if
+      # Raises ArgumentError if
       #   1) The specified scope method is undefined,
       #   2) The specified scope method returns nil, or
       #   3) The sequential ID column is undefined.
@@ -61,25 +61,24 @@ module Sequenced
         
         if scope.present?
           if !self.respond_to?(scope)
-            raise Sequenced::InvalidAttributeError.new(":scope method ##{scope.to_s} is undefined")
+            raise ArgumentError, "The method ##{scope.to_s} is undefined"
           elsif self.send(scope).nil?
-            raise Sequenced::InvalidAttributeError.new(":scope method ##{scope.to_s} returned nil unexpectedly")
+            raise ArgumentError, "The method ##{scope.to_s} returned nil unexpectedly"
           end
         end
         
         unless self.respond_to?(column)
-          raise Sequenced::InvalidAttributeError.new(":column method ##{column.to_s} is undefined")
+          raise ArgumentError, "The method ##{column.to_s} is undefined"
         end
         
         # Fetch the next ID unless it is already defined
         self.send(:"#{column}=", next_sequential_id) until sequential_id_is_unique?
       end
       
-      # Internal: Obtain the next sequential ID
+      # Internal: Obtain the next sequential ID.
       #
       # Returns Integer.
-      # Raises Sequenced::InvalidAttributeError if the last sequential ID is not
-      #   an Integer.
+      # Raises ArgumentError if the last sequential ID is not an Integer.
       def next_sequential_id
         scope    = self.class.sequenced_options[:scope]
         column   = self.class.sequenced_options[:column]
@@ -92,7 +91,7 @@ module Sequenced
         last_id = last_record.send(column)
         
         unless last_id.is_a?(Integer)
-          raise Sequenced::InvalidAttributeError("The sequential ID column must contain Integer values")
+          raise ArgumentError, "The sequential ID column must contain Integer values"
         end
         
         last_id + 1 > start_at ? last_id + 1 : start_at

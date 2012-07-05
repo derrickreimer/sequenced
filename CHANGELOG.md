@@ -1,3 +1,10 @@
+1.1.0 (July 5, 2012)
+--------------------
+
+* Raise ArgumentError instead of Sequenced::InvalidAttributeError
+* Remove custom exceptions
+* Stop calling it a "plugin"
+
 1.0.0 (March 7, 2012)
 ---------------------
 

@@ -1,12 +1,10 @@
 # Sequenced
 
-Sequenced is a simple Rails 3 plugin that generates scoped sequential IDs for 
+Sequenced is a simple gem that generates scoped sequential IDs for 
 ActiveRecord models. This gem provides an `acts_as_sequenced` macro that 
-automatically assigns a unique, sequential ID to each record. This ID is 
+automatically assigns a unique, sequential ID to each record. The sequential ID is 
 not a replacement for the database primary key, but rather adds another way to 
 retrieve the object without exposing the primary key.
-
-Extracted from the [GuideKit](https://guidekit.com) codebase.
 
 ## Purpose
 

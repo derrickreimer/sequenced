@@ -49,12 +49,12 @@ class SequencedTest < ActiveSupport::TestCase
   test "undefined scope method" do
     account = Account.create
     order = account.orders.build
-    assert_raises(Sequenced::InvalidAttributeError) { order.save }
+    assert_raises(ArgumentError) { order.save }
   end
   
   test "scope method returns nil" do
     answer = Answer.new
-    assert_raises(Sequenced::InvalidAttributeError) { answer.save }
+    assert_raises(ArgumentError) { answer.save }
   end
   
   test "custom sequential id column" do
@@ -77,7 +77,7 @@ class SequencedTest < ActiveSupport::TestCase
   test "undefined sequential id column" do
     account = Account.create
     address = account.addresses.build
-    assert_raises(Sequenced::InvalidAttributeError) { address.save }
+    assert_raises(ArgumentError) { address.save }
   end
   
   test "manually setting sequential id" do
