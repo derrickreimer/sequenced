@@ -8,6 +8,7 @@ require 'test_helper'
 #   Order        - :scope => :non_existent_column
 #   User         - :scope => :account_id, :column => :custom_sequential_id
 #   Address      - :scope => :account_id ('sequential_id' does not exist)
+#   Email        - :scope => [:emailable_id, :emailable_type]
 #   Subscription - no options
 
 class SequencedTest < ActiveSupport::TestCase
@@ -96,5 +97,12 @@ class SequencedTest < ActiveSupport::TestCase
     (1..3).each { |id| question.comments.create(:sequential_id => id) }
     comment = question.comments.create
     assert_equal 4, comment.sequential_id
+  end
+  
+  test "multi-column scopes" do
+    Email.create(:emailable_id => 1, :emailable_type => "User", :sequential_id => 2)
+    Email.create(:emailable_id => 1, :emailable_type => "Question", :sequential_id => 3)
+    email = Email.create(:emailable_id => 1, :emailable_type => "User")
+    assert_equal 3, email.sequential_id
   end
 end

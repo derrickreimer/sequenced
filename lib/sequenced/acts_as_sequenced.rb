@@ -60,22 +60,39 @@ module Sequenced
         column = self.class.sequenced_options[:column]
         
         if scope.present?
-          if !self.respond_to?(scope)
-            raise ArgumentError, "The method ##{scope.to_s} is undefined"
-          elsif self.send(scope).nil?
-            raise ArgumentError, "The method ##{scope.to_s} returned nil unexpectedly"
+          if scope.is_a?(Array)
+            scope.each { |s| verify_scope_method(s) }
+          else
+            verify_scope_method(scope)
           end
         end
         
         unless self.respond_to?(column)
-          raise ArgumentError, "The method ##{column.to_s} is undefined"
+          raise ArgumentError, "Column method ##{column.to_s} is undefined"
         end
         
         # Fetch the next ID unless it is already defined
         self.send(:"#{column}=", next_sequential_id) until sequential_id_is_unique?
       end
       
-      # Internal: Obtain the next sequential ID.
+      # Internal: Verify that the given scope method is defined and does not
+      # return nil unexpectedly.
+      #
+      # scope - A Symbol representing the scope method.
+      #
+      # Returns nothing.
+      # Raises an ArgumentError if
+      #   1) The specified scope method is undefined, or
+      #   2) The specified scope method returns nil
+      def verify_scope_method(scope)
+        if !self.respond_to?(scope)
+          raise ArgumentError, "Scope method ##{scope.to_s} is undefined"
+        elsif self.send(scope).nil?
+          raise ArgumentError, "Scope method ##{scope.to_s} returned nil unexpectedly"
+        end
+      end
+      
+      # Internal: Obtain the next sequential ID
       #
       # Returns Integer.
       # Raises ArgumentError if the last sequential ID is not an Integer.
@@ -85,7 +102,12 @@ module Sequenced
         start_at = self.class.sequenced_options[:start_at]
         
         q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
-        q = q.where(scope => self.send(scope)) if scope.is_a?(Symbol)
+        
+        if scope.is_a?(Symbol)
+          q = q.where(scope => self.send(scope))
+        elsif scope.is_a?(Array)
+          scope.each { |s| q = q.where(s => self.send(s)) }
+        end
         
         return start_at unless last_record = q.first
         last_id = last_record.send(column)
@@ -106,9 +128,14 @@ module Sequenced
         return false unless self.send(column).is_a?(Integer)
         
         q = self.class.unscoped.where(column => self.send(column))
-        q = q.where(scope => self.send(scope)) if scope.is_a?(Symbol)
-        q = q.where("NOT id = ?", self.id) if self.persisted?
         
+        if scope.is_a?(Symbol)
+          q = q.where(scope => self.send(scope))
+        elsif scope.is_a?(Array)
+          scope.each { |s| q = q.where(s => self.send(s)) }
+        end
+
+        q = q.where("NOT id = ?", self.id) if self.persisted?
         q.count > 0 ? false : true
       end
     end
