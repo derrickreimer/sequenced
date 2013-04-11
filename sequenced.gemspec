@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email       = ["derrickreimer@gmail.com"]
   s.homepage    = "https://github.com/djreimer/sequenced"
   s.summary     = "Generate scoped sequential IDs for ActiveRecord models"
-  s.description = "Sequenced is a simple gem that generates scoped sequential IDs for ActiveRecord models."
+  s.description = "Sequenced is a gem that generates scoped sequential IDs for ActiveRecord models."
 
   s.files = `git ls-files`.split("\n")
   s.test_files = Dir["test/**/*"]

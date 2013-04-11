@@ -1,3 +1,9 @@
+1.2.0 (April 11, 2013)
+----------------------
+
+* Accept an array of symbols for the scope attribute to scope by multiple
+  columns.
+
 1.1.0 (July 5, 2012)
 --------------------
 

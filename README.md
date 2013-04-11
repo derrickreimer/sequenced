@@ -56,7 +56,15 @@ end
 ```
 
 The `:scope` option can be any attribute, but will typically be the foreign
-key of an associated parent object.
+key of an associated parent object. You can even scope by multiple columns
+for polymorphic relationships:
+
+```ruby
+class Answer < ActiveRecord::Base
+  belongs_to :questionable, :polymorphic => true
+  acts_as_sequenced :scope => [:questionable_id, :questionable_type]
+end
+```
 
 ## Configuration
 
