@@ -59,16 +59,19 @@ module Sequenced
         scope  = self.class.sequenced_options[:scope]
         column = self.class.sequenced_options[:column]
         
+        unless self.respond_to?(column)
+          raise ArgumentError, "Column method ##{column.to_s} is undefined"
+        end
+        
+        # Short-circuit here if the ID is already set
+        return unless self.send(column).nil?
+        
         if scope.present?
           if scope.is_a?(Array)
             scope.each { |s| verify_scope_method(s) }
           else
             verify_scope_method(scope)
           end
-        end
-        
-        unless self.respond_to?(column)
-          raise ArgumentError, "Column method ##{column.to_s} is undefined"
         end
         
         # Fetch the next ID unless it is already defined

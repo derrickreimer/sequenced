@@ -89,7 +89,7 @@ class SequencedTest < ActiveSupport::TestCase
     another_answer.save
     
     assert_equal 10, answer.sequential_id
-    assert_equal 11, another_answer.sequential_id
+    assert_equal 10, another_answer.sequential_id
   end
   
   test "model with a default scope for sorting" do
