@@ -1,3 +1,9 @@
+1.3.0 (April 11, 2013)
+----------------------
+
+* Fix a potential bug that could overwrite previously set sequential IDs if
+  they are later found to be non-unique.
+
 1.2.0 (April 11, 2013)
 ----------------------
 
