@@ -18,6 +18,9 @@ module Sequenced
       #                       sequential ID (default: :sequential_id)
       #           :start_at - The Integer value at which the sequence should
       #                       start (default: 1)
+      #           :skip     - Skips the sequential ID generation when the lambda
+      #                       expression evaluates to nil. Gets passed the
+      #                       model object
       #
       # Examples
       #   
@@ -29,11 +32,12 @@ module Sequenced
       # Returns nothing.
       def acts_as_sequenced(options = {})
         # Remove extraneous options
-        options.slice!(:scope, :column, :start_at)
+        options.slice!(:scope, :column, :start_at, :skip)
         
         # Set defaults
         options[:column]   ||= :sequential_id
         options[:start_at] ||= 1
+        options[:skip]     ||= nil
         
         # Create class accessor for sequenced options
         cattr_accessor :sequenced_options
@@ -58,6 +62,7 @@ module Sequenced
       def set_sequential_id
         scope  = self.class.sequenced_options[:scope]
         column = self.class.sequenced_options[:column]
+        skip   = self.class.sequenced_options[:skip]
         
         unless self.respond_to?(column)
           raise ArgumentError, "Column method ##{column.to_s} is undefined"
@@ -65,6 +70,10 @@ module Sequenced
         
         # Short-circuit here if the ID is already set
         return unless self.send(column).nil?
+        
+        if skip.present?
+          return if skip.call(self)
+        end
         
         if scope.present?
           if scope.is_a?(Array)

@@ -10,6 +10,7 @@ require 'test_helper'
 #   Address      - :scope => :account_id ('sequential_id' does not exist)
 #   Email        - :scope => [:emailable_id, :emailable_type]
 #   Subscription - no options
+#   Rating       - :scope => :comment_id, skip: { |r| r.score == 0 }
 
 class SequencedTest < ActiveSupport::TestCase
   test "default start_at" do
@@ -104,5 +105,13 @@ class SequencedTest < ActiveSupport::TestCase
     Email.create(:emailable_id => 1, :emailable_type => "Question", :sequential_id => 3)
     email = Email.create(:emailable_id => 1, :emailable_type => "User")
     assert_equal 3, email.sequential_id
+  end
+  
+  test "skip option" do
+    rating = Rating.create(:comment_id => 1, :score => 1)
+    assert_equal 1, rating.sequential_id
+    
+    rating = Rating.create(:comment_id => 1, :score => 0)
+    assert_equal nil, rating.sequential_id
   end
 end

@@ -9,66 +9,100 @@
 # from scratch. The latter is a flawed and unsustainable approach (the more migrations
 # you'll amass, the slower it'll run and the greater likelihood for issues).
 #
-# It's strongly recommended to check this file into your version control system.
+# It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120219175744) do
+ActiveRecord::Schema.define(version: 20130715002029) do
 
-  create_table "accounts", :force => true do |t|
+  create_table "accounts", force: true do |t|
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "answers", :force => true do |t|
+  create_table "addresses", force: true do |t|
+    t.integer  "account_id"
+    t.string   "city"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "answers", force: true do |t|
     t.integer  "question_id"
     t.text     "body"
     t.integer  "sequential_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "answers", ["question_id"], :name => "index_answers_on_question_id"
-  add_index "answers", ["sequential_id"], :name => "index_answers_on_sequential_id"
+  add_index "answers", ["question_id"], name: "index_answers_on_question_id"
+  add_index "answers", ["sequential_id"], name: "index_answers_on_sequential_id"
 
-  create_table "invoices", :force => true do |t|
+  create_table "comments", force: true do |t|
+    t.integer  "question_id"
+    t.text     "body"
+    t.integer  "sequential_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "comments", ["question_id"], name: "index_comments_on_question_id"
+
+  create_table "emails", force: true do |t|
+    t.string   "emailable_type"
+    t.integer  "emailable_id"
+    t.integer  "sequential_id"
+    t.string   "address"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "invoices", force: true do |t|
     t.integer  "amount"
     t.integer  "sequential_id"
     t.integer  "account_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "invoices", ["account_id"], :name => "index_invoices_on_account_id"
+  add_index "invoices", ["account_id"], name: "index_invoices_on_account_id"
 
-  create_table "orders", :force => true do |t|
+  create_table "orders", force: true do |t|
     t.string   "product"
     t.integer  "account_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "questions", :force => true do |t|
+  create_table "questions", force: true do |t|
     t.string   "summary"
     t.text     "body"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "subscriptions", :force => true do |t|
+  create_table "ratings", force: true do |t|
+    t.integer  "comment_id"
+    t.integer  "score"
+    t.integer  "sequential_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "subscriptions", force: true do |t|
     t.string   "plan"
     t.integer  "sequential_id"
-    t.datetime "created_at",    :null => false
-    t.datetime "updated_at",    :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "users", :force => true do |t|
+  create_table "users", force: true do |t|
     t.integer  "account_id"
     t.string   "name"
     t.integer  "custom_sequential_id"
-    t.datetime "created_at",           :null => false
-    t.datetime "updated_at",           :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  add_index "users", ["account_id"], :name => "index_users_on_account_id"
+  add_index "users", ["account_id"], name: "index_users_on_account_id"
 
 end
