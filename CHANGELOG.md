@@ -1,3 +1,9 @@
+1.4.0 (July 15, 2013)
+---------------------
+
+* Remove hard dependency on Rails 3 in the test suite
+* Add skip option to sequence generation
+
 1.3.0 (April 11, 2013)
 ----------------------
 

@@ -23,7 +23,7 @@ end
 
 class Answer < ActiveRecord::Base
   belongs_to :question
-  acts_as_sequenced :scope => :question_id
+  acts_as_sequenced scope: :question_id
 end
 ```
 
@@ -51,18 +51,18 @@ Then, call the `acts_as_sequenced` macro in your model class:
 ```ruby
 class Answer < ActiveRecord::Base
   belongs_to :question
-  acts_as_sequenced :scope => :question_id
+  acts_as_sequenced scope: :question_id
 end
 ```
 
-The `:scope` option can be any attribute, but will typically be the foreign
+The `scope` option can be any attribute, but will typically be the foreign
 key of an associated parent object. You can even scope by multiple columns
 for polymorphic relationships:
 
 ```ruby
 class Answer < ActiveRecord::Base
   belongs_to :questionable, :polymorphic => true
-  acts_as_sequenced :scope => [:questionable_id, :questionable_type]
+  acts_as_sequenced scope: [:questionable_id, :questionable_type]
 end
 ```
 
@@ -72,25 +72,34 @@ end
 
 By default, Sequenced uses the `sequential_id` column and assumes it already 
 exists. If you wish to store the sequential ID in different integer column, 
-simply specify the column name with the `:column` option:
+simply specify the column name with the `column` option:
 
 ```ruby
-acts_as_sequenced :scope => :question_id, :column => :my_sequential_id
+acts_as_sequenced scope: :question_id, column: :my_sequential_id
 ```
 
 ### Starting the sequence at a specific number
 
 By default, Sequenced begins sequences with 1. To start at a different 
-integer, simply set the `:start_at` option:
+integer, simply set the `start_at` option:
 
 ```ruby
-acts_as_sequenced :scope => :question_id, :start_at => 1000
+acts_as_sequenced start_at: 1000
 ```
 
 ### Indexing the sequential ID column
 
 For optimal performance, it's a good idea to index the sequential ID column
 on sequenced models.
+
+### Skipping sequential ID generation
+
+If you'd like to skip generating a sequential ID under certain conditions,
+you may pass a lambda to the `skip` option:
+
+```ruby
+acts_as_sequenced skip: lambda { |r| r.score == 0 }
+```
 
 ## Example
 
@@ -107,7 +116,7 @@ end
 # app/models/answer.rb
 class Answer < ActiveRecord::Base
   belongs_to :question
-  acts_as_sequenced :scope => :question_id
+  acts_as_sequenced scope: :question_id
   
   # Automatically use the sequential ID in URLs
   def to_param
@@ -123,7 +132,7 @@ end
 # app/controllers/answers_controller.rb
 class AnswersController < ApplicationController
   before_filter :load_question
-  before_filter :load_answer, :only => [:show, :edit, :update, :destroy]
+  before_filter :load_answer, only: [:show, :edit, :update, :destroy]
   
 private
 
