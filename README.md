@@ -87,6 +87,12 @@ integer, simply set the `start_at` option:
 acts_as_sequenced start_at: 1000
 ```
 
+You may also pass a lambda to the `start_at` option:
+
+```ruby
+acts_as_sequenced skip: lambda { |r| r.computed_start_value }
+```
+
 ### Indexing the sequential ID column
 
 For optimal performance, it's a good idea to index the sequential ID column
