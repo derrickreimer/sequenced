@@ -5,6 +5,7 @@ require 'test_helper'
 #   Answer       - :scope => :question_id
 #   Comment      - :scope => :question_id (with an AR default scope)
 #   Invoice      - :scope => :account_id, :start_at => 1000
+#   Product      - :scope => :account_id, :start_at => lambda { |r| r.computed_start_value }
 #   Order        - :scope => :non_existent_column
 #   User         - :scope => :account_id, :column => :custom_sequential_id
 #   Address      - :scope => :account_id ('sequential_id' does not exist)
@@ -26,6 +27,15 @@ class SequencedTest < ActiveSupport::TestCase
     
     another_invoice = account.invoices.create
     assert_equal 1001, another_invoice.sequential_id
+  end
+  
+  test "lambda start_at" do
+    account = Account.create
+    product = Product.create(:account_id => account.id)
+    assert_equal 3, product.sequential_id
+    
+    another_product = Product.create(:account_id => account.id)
+    assert_equal 4, another_product.sequential_id
   end
   
   test "custom start_at with populated table" do

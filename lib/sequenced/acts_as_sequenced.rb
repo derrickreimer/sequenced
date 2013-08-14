@@ -111,7 +111,7 @@ module Sequenced
       def next_sequential_id
         scope    = self.class.sequenced_options[:scope]
         column   = self.class.sequenced_options[:column]
-        start_at = self.class.sequenced_options[:start_at]
+        start_at = self.class.sequenced_options[:start_at].try(:call, self) || self.class.sequenced_options[:start_at]
         
         q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
         
