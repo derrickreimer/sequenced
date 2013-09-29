@@ -158,6 +158,7 @@ module Sequenced
         q=q.order("#{column.to_s} asc")
         q.each do |eachq|
           eachq[column]=i
+          eachq.save
           i+=1
         end
       end
