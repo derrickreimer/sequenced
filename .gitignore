@@ -8,3 +8,4 @@ test/dummy/log/*.log
 test/dummy/tmp/
 test/dummy/.sass-cache
 lib/sequenced/acts_as_sequenced.rb.orig
+sequenced-1.4.0.gem
