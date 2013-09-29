@@ -118,7 +118,7 @@ module Sequenced
           expected_seqid=current_seqid+1
         end
           #If this is a valid sequence ID?
-        if expected_seqid<seq_max_val and expected_seqid>0
+        if expected_seqid<=seq_max_val and expected_seqid>seq_min_val
           #Lookup the record already occupying that position in the scope
           shuffle_list=q.where({column=>expected_seqid})
           if shuffle_list.count>0
