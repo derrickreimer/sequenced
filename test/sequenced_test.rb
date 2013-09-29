@@ -124,4 +124,84 @@ class SequencedTest < ActiveSupport::TestCase
     rating = Rating.create(:comment_id => 1, :score => 0)
     assert_equal nil, rating.sequential_id
   end
+
+  test "promote up" do
+    boss=Boss.create({:name=>'boss1'})
+
+    Promotable.create({:name=>'Promotable1',:boss_id=>boss.id})
+    previous=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id})
+    promotable=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id})
+    nextinline=Promotable.create({:name=>'Promotable4',:boss_id=>boss.id})
+    Promotable.create({:name=>'Promotable5',:boss_id=>boss.id})
+
+    promotable.promote(:up)
+    newprev=Promotable.find(previous.id)
+    newpromoted=Promotable.find(promotable.id)
+
+    assert_equal previous.sequential_id, newpromoted.sequential_id
+    assert_equal promotable.id,newprev.sequential_id
+  end
+
+  test "promote down" do
+    boss=Boss.create({:name=>'boss1'})
+
+    Promotable.create({:name=>'Promotable1',:boss_id=>boss.id})
+    previous=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id})
+    promotable=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id})
+    nextinline=Promotable.create({:name=>'Promotable4',:boss_id=>boss.id})
+    Promotable.create({:name=>'Promotable5',:boss_id=>boss.id})
+
+    promotable.promote(:down)
+    newnextinline=Promotable.find(nextinline.id)
+    newpromoted=Promotable.find(promotable.id)
+
+    assert_equal nextinline.sequential_id, newpromoted.sequential_id
+    assert_equal promotable.id,newnextinline.sequential_id
+  end
+
+  test "pomote up edgecase-overflow" do
+    Promotable.destroy_all
+
+    boss=Boss.create({:name=>'boss1'})
+
+    promotable=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id})
+    promotable.promote(:up)
+    newpromotable=Promotable.find(promotable.id)
+    assert_equal pomotable.sequential_id,newpromotable.sequential_id
+  end
+
+  test "promote down edgecase-overflow" do
+    Promotable.destroy_all
+
+    boss=Boss.create({:name=>'boss1'})
+
+    promotable=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id})
+    promotable.promote(:up)
+    newpromotable=Promotable.find(promotable.id)
+    assert_equal pomotable.sequential_id,newpromotable.sequential_id
+  end
+
+  test "sanitization test" do
+    Promotable.destroy_all
+
+    p1=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id,:sequential_id=>1})
+    p2=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id,:sequential_id=>3})
+    p3=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id,:sequential_id=>4})
+    p4=Promotable.create({:name=>'Promotable4',:boss_id=>boss.id,:sequential_id=>7})
+    p5=Promotable.create({:name=>'Promotable5',:boss_id=>boss.id,:sequential_id=>12})
+
+    p1.sanitize_sequence()
+
+    np1=Promotable.find(p1.id)
+    np2=Promotable.find(p2.id)
+    np3=Promotable.find(p3.id)
+    np4=Promotable.find(p4.id)
+    np5=Promotable.find(p5.id)
+
+    assert_equal 1,np1
+    assert_equal 2,np2
+    assert_equal 3,np3
+    assert_equal 4,np4
+    assert_equal 5,np5
+  end
 end

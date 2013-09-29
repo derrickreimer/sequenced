@@ -90,19 +90,19 @@ module Sequenced
       def promote(direction)
         seq_min_val=0
 
+        scope    = self.class.sequenced_options[:scope]
         column   = self.class.sequenced_options[:column]
 
+        q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
         if scope.is_a?(Symbol)
           q = q.where(scope => self.send(scope))
         elsif scope.is_a?(Array)
           scope.each { |s| q = q.where(s => self.send(s)) }
         end
-
-        q.order('#{column.to_s} asc')
+        q=q.order("#{column.to_s} asc")
         last_record=q.last
 
-        seq_max_val=q.send(column)
-
+        seq_max_val=last_record.send(column)
         if direction.is_a?(String)
           direction=direction.to_sym
         elsif direction.is_a?(Symbol)
@@ -110,11 +110,9 @@ module Sequenced
         else
           raise ArgumentError, "Wrong direction.It should only be a string or a symbol with values up/down/:up/:down"
         end
-
         if direction==:up
           current_seqid=self.send(column)
           expected_seqid=current_seqid-1
-
         elsif direction ==:down
           current_seqid=self.send(column)
           expected_seqid=current_seqid+1
@@ -146,6 +144,7 @@ module Sequenced
       end
 
       def sanitize_sequence()
+        scope    = self.class.sequenced_options[:scope]
         column   = self.class.sequenced_options[:column]
         q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
 
@@ -156,7 +155,7 @@ module Sequenced
         end
 
         i=1
-        q=q.order('#{column.to_s} asc')
+        q=q.order("#{column.to_s} asc")
         q.each do |eachq|
           eachq[column]=i
           i+=1

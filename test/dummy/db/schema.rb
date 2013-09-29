@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130730004055) do
+ActiveRecord::Schema.define(version: 20130929072709) do
 
   create_table "accounts", force: true do |t|
     t.string   "name"
@@ -36,6 +36,12 @@ ActiveRecord::Schema.define(version: 20130730004055) do
 
   add_index "answers", ["question_id"], name: "index_answers_on_question_id"
   add_index "answers", ["sequential_id"], name: "index_answers_on_sequential_id"
+
+  create_table "bosses", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "comments", force: true do |t|
     t.integer  "question_id"
@@ -76,6 +82,14 @@ ActiveRecord::Schema.define(version: 20130730004055) do
   create_table "products", force: true do |t|
     t.integer  "account_id"
     t.integer  "sequential_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "promotables", force: true do |t|
+    t.integer  "sequential_id"
+    t.integer  "boss_id"
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
