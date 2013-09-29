@@ -106,6 +106,17 @@ you may pass a lambda to the `skip` option:
 ```ruby
 acts_as_sequenced skip: lambda { |r| r.score == 0 }
 ```
+### *Promoting and demotion
+If you want to promote or demote a sequencable entity, call
+```
+*your_model_object*.promote(:up) (or) *your_model_object*.promote(:down)
+```
+
+### *Sequence sanitization
+if you manually change the sequence id's and if you want to reassign the ids in same order starting from `val`, you can call the `sanitize_sequence ` operation as follows. By default, sequence sanitization is done with start as 1.
+```
+*your_model_object*.sanitize_sequence(val)
+```
 
 ## Example
 

@@ -143,7 +143,7 @@ module Sequenced
         end
       end
 
-      def sanitize_sequence()
+      def sanitize_sequence(start=1)
         scope    = self.class.sequenced_options[:scope]
         column   = self.class.sequenced_options[:column]
         q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
@@ -154,7 +154,9 @@ module Sequenced
           scope.each { |s| q = q.where(s => self.send(s)) }
         end
 
-        i=1
+
+        i=start
+        
         q=q.order("#{column.to_s} asc")
         q.each do |eachq|
           eachq[column]=i
