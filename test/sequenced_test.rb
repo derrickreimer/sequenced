@@ -244,4 +244,5 @@ class SequencedTest < ActiveSupport::TestCase
 		assert Promotable.find(p3.id).sequential_id==1
 		assert Promotable.find(p1.id).sequential_id==oldp3seq
 	end
+
 end

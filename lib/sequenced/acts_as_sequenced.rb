@@ -188,10 +188,16 @@ module Sequenced
 				return q.last
 			end
 
-			def sanitize_sequence(start=1)
+			def sanitize_sequence
 				q=self.getScopedRecords
 				column = self.class.sequenced_options[:column]
-				i=start
+				if self.class.sequenced_options[:start_at].is_a? Integer
+					start_at = self.class.sequenced_options[:start_at]
+				else
+					start_at=self.class.sequenced_options[:start_at].try(:call, self)
+				end
+
+				i= start_at
 				q.each do |eachq|
 					eachq[column]=i
 					if !eachq.save
@@ -233,15 +239,9 @@ module Sequenced
 				end
 
 
-				q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
+				q = self.getScopedRecords
 
-				if scope.is_a?(Symbol)
-					q = q.where(scope => self.send(scope))
-				elsif scope.is_a?(Array)
-					scope.each { |s| q = q.where(s => self.send(s)) }
-				end
-
-				return start_at unless last_record = q.first
+				return start_at unless last_record = q.last
 				last_id = last_record.send(column)
 
 				unless last_id.is_a?(Integer)
