@@ -19,51 +19,51 @@ class SequencedTest < ActiveSupport::TestCase
     answer = question.answers.create
     assert_equal 1, answer.sequential_id
   end
-  
+
   test "custom start_at" do
     account = Account.create
     invoice = account.invoices.create
     assert_equal 1000, invoice.sequential_id
-    
+
     another_invoice = account.invoices.create
     assert_equal 1001, another_invoice.sequential_id
   end
-  
+
   test "lambda start_at" do
     account = Account.create
     product = Product.create(:account_id => account.id)
     assert_equal 3, product.sequential_id
-    
+
     another_product = Product.create(:account_id => account.id)
     assert_equal 4, another_product.sequential_id
   end
-  
+
   test "custom start_at with populated table" do
     account = Account.create
     account.invoices.create(:sequential_id => 1)
     invoice = account.invoices.create
     assert_equal 1000, invoice.sequential_id
   end
-  
+
   test "sequential id increment" do
     question = Question.create
     question.answers.create(:sequential_id => 10)
     another_answer = question.answers.create
     assert_equal 11, another_answer.sequential_id
   end
-  
+
   test "default scope" do
     Subscription.create(:sequential_id => 1)
     subscription = Subscription.create
     assert_equal 2, subscription.sequential_id
   end
-  
+
   test "undefined scope method" do
     account = Account.create
     order = account.orders.build
     assert_raises(ArgumentError) { order.save }
   end
-  
+
   test "scope method returns nil" do
     answer = Answer.new
     assert_raises(ArgumentError) { answer.save }
@@ -167,7 +167,7 @@ class SequencedTest < ActiveSupport::TestCase
     promotable=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id})
     promotable.promote(:up)
     newpromotable=Promotable.find(promotable.id)
-    assert_equal pomotable.sequential_id,newpromotable.sequential_id
+    assert_equal promotable.sequential_id,newpromotable.sequential_id
   end
 
   test "promote down edgecase-overflow" do
@@ -178,12 +178,12 @@ class SequencedTest < ActiveSupport::TestCase
     promotable=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id})
     promotable.promote(:up)
     newpromotable=Promotable.find(promotable.id)
-    assert_equal pomotable.sequential_id,newpromotable.sequential_id
+    assert_equal promotable.sequential_id,newpromotable.sequential_id
   end
 
   test "sanitization test" do
     Promotable.destroy_all
-
+		boss=Boss.create({:name=>'boss1'})
     p1=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id,:sequential_id=>1})
     p2=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id,:sequential_id=>3})
     p3=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id,:sequential_id=>4})
@@ -198,10 +198,50 @@ class SequencedTest < ActiveSupport::TestCase
     np4=Promotable.find(p4.id)
     np5=Promotable.find(p5.id)
 
-    assert_equal 1,np1
-    assert_equal 2,np2
-    assert_equal 3,np3
-    assert_equal 4,np4
-    assert_equal 5,np5
-  end
+    assert_equal 1,np1.sequential_id
+    assert_equal 2,np2.sequential_id
+    assert_equal 3,np3.sequential_id
+    assert_equal 4,np4.sequential_id
+    assert_equal 5,np5.sequential_id
+	end
+
+	test 'get_sequence_top' do
+		Promotable.destroy_all
+		boss=Boss.create({:name=>'boss1'})
+		p1=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id,:sequential_id=>1})
+		p2=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id,:sequential_id=>3})
+		p3=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id,:sequential_id=>4})
+		p4=Promotable.create({:name=>'Promotable4',:boss_id=>boss.id,:sequential_id=>7})
+		p5=Promotable.create({:name=>'Promotable5',:boss_id=>boss.id,:sequential_id=>12})
+
+		assert p3.get_sequence_top.id==p1.id
+	end
+
+	test 'get_sequence_bottom' do
+		Promotable.destroy_all
+		boss=Boss.create({:name=>'boss1'})
+		p1=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id,:sequential_id=>1})
+		p2=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id,:sequential_id=>3})
+		p3=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id,:sequential_id=>4})
+		p4=Promotable.create({:name=>'Promotable4',:boss_id=>boss.id,:sequential_id=>7})
+		p5=Promotable.create({:name=>'Promotable5',:boss_id=>boss.id,:sequential_id=>12})
+
+		assert p3.get_sequence_bottom.id==p5.id
+	end
+
+	test 'promote_to' do
+		Promotable.destroy_all
+		boss=Boss.create({:name=>'boss1'})
+		p1=Promotable.create({:name=>'Promotable1',:boss_id=>boss.id,:sequential_id=>1})
+		p2=Promotable.create({:name=>'Promotable2',:boss_id=>boss.id,:sequential_id=>3})
+		p3=Promotable.create({:name=>'Promotable3',:boss_id=>boss.id,:sequential_id=>4})
+		p4=Promotable.create({:name=>'Promotable4',:boss_id=>boss.id,:sequential_id=>7})
+		p5=Promotable.create({:name=>'Promotable5',:boss_id=>boss.id,:sequential_id=>12})
+
+		oldp3seq=p3.sequential_id
+		p3.promote_to(1)
+
+		assert Promotable.find(p3.id).sequential_id==1
+		assert Promotable.find(p1.id).sequential_id==oldp3seq
+	end
 end

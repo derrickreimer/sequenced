@@ -87,20 +87,29 @@ module Sequenced
 				self.send(:"#{column}=", next_sequential_id) until sequential_id_is_unique?
 			end
 
-			def promote(direction)
-				seq_min_val=0
-
+			def getScopedRecords
 				scope = self.class.sequenced_options[:scope]
 				column = self.class.sequenced_options[:column]
-
 				q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} ASC")
+
 				if scope.is_a?(Symbol)
 					q = q.where(scope => self.send(scope))
 				elsif scope.is_a?(Array)
 					scope.each { |s| q = q.where(s => self.send(s)) }
 				end
-				last_record=q.all.last
-				seq_max_val=last_record.send(column)
+
+				return q
+			end
+
+			def promote(direction)
+				scope = self.class.sequenced_options[:scope]
+				column = self.class.sequenced_options[:column]
+
+				seq_min_val=self.get_sequence_top.send(column)
+				seq_max_val=self.get_sequence_bottom.send(column)
+
+				q = self.getScopedRecords
+
 				if direction.is_a?(String)
 					direction=direction.to_sym
 				elsif direction.is_a?(Symbol)
@@ -116,7 +125,7 @@ module Sequenced
 					expected_seqid=current_seqid+1
 				end
 				#If this is a valid sequence ID?
-				if expected_seqid<=seq_max_val and expected_seqid>seq_min_val
+				if expected_seqid<=seq_max_val and expected_seqid>=seq_min_val
 					#Lookup the record already occupying that position in the scope
 					shuffle_list=q.where({column => expected_seqid})
 					if shuffle_list.count>0
@@ -141,24 +150,53 @@ module Sequenced
 				end
 			end
 
-			def sanitize_sequence(start=1)
-				scope = self.class.sequenced_options[:scope]
-				column = self.class.sequenced_options[:column]
-				q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
+			def promote_to(position)
+				q=self.getScopedRecords
+				min=self.get_sequence_top.sequential_id
+				max=self.get_sequence_bottom.sequential_id
+				my_sid=self.sequential_id
+				if position<=max and position>=min
+					replacables=q.where({:sequential_id=>position})
+					if replacables.count>0
+						replaced=replacables.first
+						replaced.sequential_id=my_sid
+						if !replaced.save
+							raise Exception,"Target replacable entity couldn't be saved"
+						end
 
-				if scope.is_a?(Symbol)
-					q = q.where(scope => self.send(scope))
-				elsif scope.is_a?(Array)
-					scope.each { |s| q = q.where(s => self.send(s)) }
+						self.sequential_id=position
+						if !self.save
+							raise Exception,"Current entity couldn't be saved"
+						else
+							return true
+						end
+					else
+						raise Exception,"Replacable record not found in position #{position}"
+					end
 				end
+			end
 
+			def get_sequence_top
+				q=self.getScopedRecords
 
+				return q.first
+			end
+
+			def get_sequence_bottom
+				q=self.getScopedRecords
+
+				return q.last
+			end
+
+			def sanitize_sequence(start=1)
+				q=self.getScopedRecords
+				column = self.class.sequenced_options[:column]
 				i=start
-
-				q=q.order("#{column.to_s} asc")
 				q.each do |eachq|
 					eachq[column]=i
-					eachq.save
+					if !eachq.save
+						raise Exception,"Sanitization failed abruptly"
+					end
 					i+=1
 				end
 			end
@@ -187,7 +225,13 @@ module Sequenced
 			def next_sequential_id
 				scope = self.class.sequenced_options[:scope]
 				column = self.class.sequenced_options[:column]
-				start_at = self.class.sequenced_options[:start_at]
+
+				if self.class.sequenced_options[:start_at].is_a? Integer
+					start_at = self.class.sequenced_options[:start_at]
+				else
+					start_at=self.class.sequenced_options[:start_at].try(:call, self)
+				end
+
 
 				q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} DESC")
 

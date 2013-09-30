@@ -1,7 +1,7 @@
 class CreateUsers < ActiveRecord::Migration
   def change
     create_table :users do |t|
-      t.references :account
+      t.integer :account_id
       t.string :name
       t.integer :custom_sequential_id
 
