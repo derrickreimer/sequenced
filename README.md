@@ -66,6 +66,38 @@ class Answer < ActiveRecord::Base
 end
 ```
 
+### Upvoting and Downvoting
+If you want to promote or demote a sequencable entity, call
+```
+*your_model_object*.promote(:up) (or) *your_model_object*.promote(:down)
+```
+
+### Sequence sanitization
+If you manually change the sequence id's and if you want to reassign the ids in same order starting from the same start_at value with which the sequence has been generated with (which is mostly 1).
+```
+*your_model_object*.sanitize_sequence
+```
+
+### Get all members of a scope
+You can access all the members of the same scope in ascending order like this.
+
+```ruby
+*<any_one_record_from_the_scope>*.getScopedRecords
+```
+
+###Get the top member of the sequence
+You can access the top(smallest sequential_id) member of a scoped sequence like this
+
+```ruby
+*<any_one_record_from_the_scope>*.get_sequence_top
+```
+###Get the bottom member of the sequence
+You can access the bottom(largest sequential_id) member of a scoped sequence like this
+
+```ruby
+*<any_one_record_from_the_scope>*.get_sequence_bottom
+```
+
 ## Configuration
 
 ### Overriding the default sequential ID column

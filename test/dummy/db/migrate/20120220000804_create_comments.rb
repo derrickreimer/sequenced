@@ -1,7 +1,7 @@
 class CreateComments < ActiveRecord::Migration
   def change
     create_table :comments do |t|
-      t.references :question
+      t.integer :question_id
       t.text :body
       t.integer :sequential_id
 

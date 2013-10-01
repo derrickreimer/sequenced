@@ -4,8 +4,8 @@ require "sequenced/version"
 Gem::Specification.new do |s|
   s.name        = "sequenced"
   s.version     = Sequenced::VERSION
-  s.authors     = ["Derrick Reimer"]
-  s.email       = ["derrickreimer@gmail.com"]
+  s.authors     = ["Derrick Reimer","Simtron"]
+  s.email       = ["derrickreimer@gmail.com","simha.gemaraju@gmail.com"]
   s.homepage    = "https://github.com/djreimer/sequenced"
   s.summary     = "Generate scoped sequential IDs for ActiveRecord models"
   s.description = "Sequenced is a gem that generates scoped sequential IDs for ActiveRecord models."
