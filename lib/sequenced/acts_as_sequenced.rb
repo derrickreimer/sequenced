@@ -87,7 +87,9 @@ module Sequenced
 				self.send(:"#{column}=", next_sequential_id) until sequential_id_is_unique?
 			end
 
-			def getScopedRecords
+			#Gets all the elements in the same scope of the current record
+			#Returns an array object containing all the scoped records arranged in ascending order
+			def get_scoped_records
 				scope = self.class.sequenced_options[:scope]
 				column = self.class.sequenced_options[:column]
 				q = self.class.unscoped.where("#{column.to_s} IS NOT NULL").order("#{column.to_s} ASC")
@@ -101,21 +103,25 @@ module Sequenced
 				return q
 			end
 
-			def promote(direction)
-				scope = self.class.sequenced_options[:scope]
+			#Promotes up or down a certain scoped record
+			#Takes 'up'/:up/'down'/:down for direction parameter
+			#Raises Exceptions on failing
+			#Returns true on passing
+			def promote!(direction)
+
 				column = self.class.sequenced_options[:column]
 
 				seq_min_val=self.get_sequence_top.send(column)
 				seq_max_val=self.get_sequence_bottom.send(column)
 
-				q = self.getScopedRecords
+				q = self.get_scoped_records
 
 				if direction.is_a?(String)
 					direction=direction.to_sym
 				elsif direction.is_a?(Symbol)
 					#do nothing...for now...
 				else
-					raise ArgumentError, "Wrong direction.It should only be a string or a symbol with values up/down/:up/:down"
+					raise ArgumentError, 'Wrong direction.It should only be a string or a symbol'
 				end
 				if direction==:up
 					current_seqid=self.send(column)
@@ -123,6 +129,8 @@ module Sequenced
 				elsif direction ==:down
 					current_seqid=self.send(column)
 					expected_seqid=current_seqid+1
+				else
+					raise ArgumentError, 'Wrong direction.It should only be a string or a symbol with values up/down/:up/:down'
 				end
 				#If this is a valid sequence ID?
 				if expected_seqid<=seq_max_val and expected_seqid>=seq_min_val
@@ -137,7 +145,7 @@ module Sequenced
 						self[column]=expected_seqid
 						if mover.save and self.save
 							#Swap completed successfully. Can return safely
-							return
+							return true
 						else
 							raise Exception, 'Something went wrong internally'
 						end
@@ -145,13 +153,26 @@ module Sequenced
 						raise Exception, 'mover not found for promotion although one is expected. Sanitize sequence just in case'
 					end
 				else
-					#Do nothing. Return
-					return
+					raise Exception, 'Promotion beyond bounding is not allowed. It is suggested to use sanitize_sequence if really needed.'
 				end
 			end
 
-			def promote_to(position)
-				q=self.getScopedRecords
+			# Exception proof promote operation
+			#Takes 'up'/:up/'down'/:down for direction parameter
+			# Return true or false
+			def promote(direction)
+				begin
+					return self.promote!(direction)
+				rescue Exception =>e
+					puts "Rescue:#{e.message}"
+					return false
+				end
+			end
+
+			#Same as promote operation, except, this operation swaps the sequential_id of
+			#record in position <position> with current record
+			def promote_to!(position)
+				q=self.get_scoped_records
 				min=self.get_sequence_top.sequential_id
 				max=self.get_sequence_bottom.sequential_id
 				my_sid=self.sequential_id
@@ -173,23 +194,39 @@ module Sequenced
 					else
 						raise Exception,"Replacable record not found in position #{position}"
 					end
+				else
+					raise Exception,"Promotion to an unbound location is a violation."
 				end
 			end
 
+			def promote_to(position)
+				begin
+					self.promote_to!(position)
+						return true
+				rescue Exception=>e
+					puts "Rescue:#{e.message}"
+					return false
+				end
+			end
+
+			#Gets the record with the smallest sequential id
 			def get_sequence_top
-				q=self.getScopedRecords
+				q=self.get_scoped_records
 
 				return q.first
 			end
 
+			#Gets the record with the largest sequential id
 			def get_sequence_bottom
-				q=self.getScopedRecords
+				q=self.get_scoped_records
 
 				return q.last
 			end
 
+			#Collects all the records of a scope in an order and reassigns sequential_ids in same order
+			#starting from start_at value
 			def sanitize_sequence
-				q=self.getScopedRecords
+				q=self.get_scoped_records
 				column = self.class.sequenced_options[:column]
 				if self.class.sequenced_options[:start_at].is_a? Integer
 					start_at = self.class.sequenced_options[:start_at]
@@ -239,7 +276,7 @@ module Sequenced
 				end
 
 
-				q = self.getScopedRecords
+				q = self.get_scoped_records
 
 				return start_at unless last_record = q.last
 				last_id = last_record.send(column)
