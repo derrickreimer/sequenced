@@ -29,6 +29,7 @@ module Sequenced
     end
 
     def next_id_in_sequence
+      start_at = start_at.respond_to?(:call) ? start_at.call(record) : start_at
       return start_at unless last_record = find_last_record
       max(last_record.send(column) + 1, start_at)
     end
