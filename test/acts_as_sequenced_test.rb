@@ -13,7 +13,7 @@ require 'test_helper'
 #   Subscription - no options
 #   Rating       - :scope => :comment_id, skip: { |r| r.score == 0 }
 
-class SequencedTest < ActiveSupport::TestCase
+class ActsAsSequencedTest < ActiveSupport::TestCase
   test "default start_at" do
     question = Question.create
     answer = question.answers.create
@@ -61,12 +61,7 @@ class SequencedTest < ActiveSupport::TestCase
   test "undefined scope method" do
     account = Account.create
     order = account.orders.build
-    assert_raises(ArgumentError) { order.save }
-  end
-  
-  test "scope method returns nil" do
-    answer = Answer.new
-    assert_raises(ArgumentError) { answer.save }
+    assert_raises(NoMethodError) { order.save }
   end
   
   test "custom sequential id column" do
@@ -89,7 +84,7 @@ class SequencedTest < ActiveSupport::TestCase
   test "undefined sequential id column" do
     account = Account.create
     address = account.addresses.build
-    assert_raises(ArgumentError) { address.save }
+    assert_raises(NoMethodError) { address.save }
   end
   
   test "manually setting sequential id" do
