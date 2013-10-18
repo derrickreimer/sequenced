@@ -1,5 +1,8 @@
 # Sequenced
 
+[![Build Status](https://travis-ci.org/djreimer/sequenced.png)](https://travis-ci.org/djreimer/sequenced)
+[![Code Climate](https://codeclimate.com/github/djreimer/sequenced.png)](https://codeclimate.com/github/djreimer/sequenced)
+
 Sequenced is a simple gem that generates scoped sequential IDs for 
 ActiveRecord models. This gem provides an `acts_as_sequenced` macro that 
 automatically assigns a unique, sequential ID to each record. The sequential ID is 
