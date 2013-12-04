@@ -134,7 +134,7 @@ class Answer < ActiveRecord::Base
 end
 
 # config/routes.rb
-resources :questions
+resources :questions do
   resources :answers
 end
 
