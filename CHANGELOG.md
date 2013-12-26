@@ -1,3 +1,10 @@
+1.5.0 (December 26, 2013)
+-------------------------
+
+* Add the ability to pass a lambda for the start_at option (Bobby Uhlenbrock)
+* Major internal refactor for cleaner, more modular code
+* Scope by base class when single table inheritance is being used (Adam Becker)
+
 1.4.0 (July 15, 2013)
 ---------------------
 

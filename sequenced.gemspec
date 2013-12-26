@@ -5,6 +5,7 @@ Gem::Specification.new do |s|
   s.name        = "sequenced"
   s.version     = Sequenced::VERSION
   s.authors     = ["Derrick Reimer"]
+  s.licenses    = ['MIT']
   s.email       = ["derrickreimer@gmail.com"]
   s.homepage    = "https://github.com/djreimer/sequenced"
   s.summary     = "Generate scoped sequential IDs for ActiveRecord models"
