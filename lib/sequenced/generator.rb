@@ -45,7 +45,7 @@ module Sequenced
   private
 
     def base_relation
-      record.class.unscoped
+      record.class.base_class.unscoped
     end
 
     def find_last_record

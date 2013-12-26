@@ -1,0 +1,2 @@
+class Werewolf < Monster
+end
