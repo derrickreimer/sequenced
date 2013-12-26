@@ -1,0 +1,2 @@
+class Zombie < Monster
+end
