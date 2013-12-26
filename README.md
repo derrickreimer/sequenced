@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/djreimer/sequenced.png)](https://travis-ci.org/djreimer/sequenced)
 [![Code Climate](https://codeclimate.com/github/djreimer/sequenced.png)](https://codeclimate.com/github/djreimer/sequenced)
+[![Gem Version](https://badge.fury.io/rb/sequenced.png)](http://badge.fury.io/rb/sequenced)
 
 Sequenced is a simple gem that generates scoped sequential IDs for 
 ActiveRecord models. This gem provides an `acts_as_sequenced` macro that 
@@ -165,7 +166,7 @@ instead of by their primary keys:
 
 ## License
 
-Copyright &copy; 2012-2013 Derrick Reimer
+Copyright &copy; 2011-2014 Derrick Reimer
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
