@@ -1,3 +1,9 @@
+1.6.0 (April 10, 2014)
+----------------------
+
+* Move generation callback from `before_save` to `before_validation` to
+  allow validations to utilize the sequential id (makebytes)
+
 1.5.0 (December 26, 2013)
 -------------------------
 
