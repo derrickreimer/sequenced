@@ -1,3 +1,11 @@
+2.0.0 (October 24, 2014)
+------------------------
+
+* Revert "Move generation callback from `before_save` to `before_validation` to
+  allow validations to utilize the sequential id". This change introduced a
+  critical bug where generating multiple records in one transaction would lead
+  to duplicate ids (see #10)
+
 1.6.0 (April 10, 2014)
 ----------------------
 
