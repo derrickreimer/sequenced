@@ -129,10 +129,4 @@ class ActsAsSequencedTest < ActiveSupport::TestCase
     assert_equal 1, zombie.sequential_id
     assert_equal 2, werewolf.sequential_id
   end
-
-  test "validation passing" do
-    obj = Policeman.create
-    assert_empty obj.errors[:sequential_id]
-    assert obj.valid?
-  end
 end

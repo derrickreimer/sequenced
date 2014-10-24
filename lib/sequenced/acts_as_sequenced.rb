@@ -34,7 +34,7 @@ module Sequenced
         cattr_accessor :sequenced_options
         self.sequenced_options = options
 
-        before_validation :set_sequential_id
+        before_save :set_sequential_id
         include Sequenced::ActsAsSequenced::InstanceMethods
       end
     end
