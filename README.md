@@ -166,7 +166,7 @@ instead of by their primary keys:
 
 ## License
 
-Copyright &copy; 2011-2014 Derrick Reimer
+Copyright &copy; 2011-2015 Derrick Reimer
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
