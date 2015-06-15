@@ -42,9 +42,7 @@ module Sequenced
 
     module InstanceMethods
       def set_sequential_id
-        self.class.with_table_lock do
-          Sequenced::Generator.new(self, self.class.base_class.sequenced_options).set
-        end
+        Sequenced::Generator.new(self, self.class.base_class.sequenced_options).set
       end
     end
   end

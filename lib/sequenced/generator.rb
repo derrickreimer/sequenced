@@ -23,8 +23,10 @@ module Sequenced
     end
 
     def next_id
-      next_id_in_sequence.tap do |id|
-        id += 1 until unique?(id)
+      record.class.with_table_lock do
+        next_id_in_sequence.tap do |id|
+          id += 1 until unique?(id)
+        end
       end
     end
 
