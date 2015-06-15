@@ -1,5 +1,6 @@
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/class/attribute_accessors'
+require 'monogamy'
 
 module Sequenced
   module ActsAsSequenced

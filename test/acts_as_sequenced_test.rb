@@ -17,6 +17,24 @@ require 'test_helper'
 #   Werewolf     - STI, inherits from Monster
 
 class ActsAsSequencedTest < ActiveSupport::TestCase
+  test "race condition" do
+    question = Question.create
+
+    t1 = Thread.new do
+      1000.times { question.answers.create }
+    end
+
+    t2 = Thread.new do
+      1000.times { question.answers.create }
+    end
+
+    t1.join
+    t2.join
+
+    ids = question.answers.pluck(:sequential_id)
+    assert_equal ids.count, ids.uniq.count
+  end
+
   test "default start_at" do
     question = Question.create
     answer = question.answers.create

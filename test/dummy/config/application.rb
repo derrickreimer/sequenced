@@ -4,6 +4,7 @@ require 'rails/all'
 
 Bundler.require
 require "sequenced"
+require "monogamy"
 
 module Dummy
   class Application < Rails::Application
