@@ -11,7 +11,9 @@ module Sequenced
     end
 
     def set
-      record.send(:"#{column}=", next_id) unless id_set? || skip?
+      return if id_set? || skip?
+      set_transaction_isolation_level
+      record.send(:"#{column}=", next_id)
     end
 
     def id_set?
@@ -66,5 +68,10 @@ module Sequenced
       values.to_a.max
     end
 
+    def set_transaction_isolation_level
+      if record.class.connection.supports_transaction_isolation?
+        record.class.connection.execute("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE")
+      end
+    end
   end
 end
