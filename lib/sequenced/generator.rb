@@ -12,7 +12,7 @@ module Sequenced
 
     def set
       return if id_set? || skip?
-      lock_table(record.class)
+      lock_table
       record.send(:"#{column}=", next_id)
     end
 
@@ -46,14 +46,15 @@ module Sequenced
 
   private
 
-    def lock_table(klass)
+    def lock_table
       if postgresql?
-        klass.connection.execute("LOCK TABLE #{klass.table_name} IN EXCLUSIVE MODE")
+        record.class.connection.execute("LOCK TABLE #{record.class.table_name} IN EXCLUSIVE MODE")
       end
     end
 
     def postgresql?
-      ActiveRecord::Base.configurations[Rails.env]['adapter'] == 'postgresql'
+      defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
+        record.class.connection.instance_of?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
     end
 
     def base_relation
