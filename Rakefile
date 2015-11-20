@@ -31,5 +31,13 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = false
 end
 
-
 task :default => :test
+
+namespace :db do
+  task :create do
+    # File.expand_path is executed directory of generated Rails app
+    rakefile = File.expand_path('Rakefile', 'test/dummy/')
+    command = "rake -f '%s' db:create" % rakefile
+    sh(command) unless ENV["DISABLE_CREATE"]
+  end
+end
