@@ -35,4 +35,7 @@ Dummy::Application.configure do
 
   # Print deprecation notices to the stderr
   config.active_support.deprecation = :stderr
+
+  # Required for Rails >= 4.2
+  config.eager_load = true
 end

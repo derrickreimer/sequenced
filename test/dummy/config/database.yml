@@ -15,7 +15,7 @@ postgresql: &postgresql
   min_messages: ERROR
 
 defaults: &defaults
-  pool: 5
+  pool: 100
   timeout: 5000
   host: localhost
   <<: *<%= ENV['DB'] || "sqlite" %>
