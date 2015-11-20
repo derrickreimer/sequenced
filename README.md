@@ -70,6 +70,30 @@ class Answer < ActiveRecord::Base
 end
 ```
 
+## Schema and data integrity
+
+The currently published version of this gem is not concurrent-safe. Undefined behavior will occur if you attempt to use this in production with multiple workers
+
+You can mitigate this somewhat by applying a unique index to your model. This will ensure that you can never have duplicate sequential ids within a scope, causing concurrent updates to instead raise a UniqueViolationException.
+
+It would also be a good idea to apply a not-null constraint to your sequential_id column as well if you never intend to skip it.
+
+Here is an example migration for a model that has a sequential_id scoped to a burrow_id:
+
+```ruby
+# app/db/migrations/20151120190645_create_badgers.rb
+class CreateBadgers < ActiveRecord::Migration
+  def change
+    create_table :badgers do |t|
+      t.integer :sequential_id, null: false
+      t.integer :burrow_id
+    end
+
+    add_index :badgers, [:sequential_id, :burrow_id], unique: true, name: 'unique_sequential_id_burrow_id'
+  end
+end
+```
+
 ## Configuration
 
 ### Overriding the default sequential ID column
