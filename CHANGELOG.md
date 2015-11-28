@@ -1,3 +1,9 @@
+3.0.0 (November 28, 2015)
+-------------------------
+
+* Make this gem thread-safe for PostgreSQL
+  (samphilipd, [#16](https://github.com/djreimer/sequenced/pull/16)) 
+
 2.0.0 (October 24, 2014)
 ------------------------
 

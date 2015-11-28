@@ -4,20 +4,20 @@
 [![Code Climate](https://codeclimate.com/github/djreimer/sequenced.png)](https://codeclimate.com/github/djreimer/sequenced)
 [![Gem Version](https://badge.fury.io/rb/sequenced.png)](http://badge.fury.io/rb/sequenced)
 
-Sequenced is a simple gem that generates scoped sequential IDs for 
-ActiveRecord models. This gem provides an `acts_as_sequenced` macro that 
-automatically assigns a unique, sequential ID to each record. The sequential ID is 
-not a replacement for the database primary key, but rather adds another way to 
+Sequenced is a simple gem that generates scoped sequential IDs for
+ActiveRecord models. This gem provides an `acts_as_sequenced` macro that
+automatically assigns a unique, sequential ID to each record. The sequential ID is
+not a replacement for the database primary key, but rather adds another way to
 retrieve the object without exposing the primary key.
 
 ## Purpose
 
-It's generally a bad practice to expose your primary keys to the world 
-in your URLs. However, it is often appropriate to number objects in sequence 
+It's generally a bad practice to expose your primary keys to the world
+in your URLs. However, it is often appropriate to number objects in sequence
 (in the context of a parent object).
 
 For example, given a Question model that has many Answers, it makes sense
-to number answers sequentially for each individual question. You can achieve 
+to number answers sequentially for each individual question. You can achieve
 this with Sequenced in one line of code:
 
 ```ruby
@@ -34,7 +34,7 @@ end
 ## Installation
 
 Add the gem to your Gemfile:
-   
+
     gem 'sequenced'
 
 Install the gem with bundler:
@@ -98,8 +98,8 @@ end
 
 ### Overriding the default sequential ID column
 
-By default, Sequenced uses the `sequential_id` column and assumes it already 
-exists. If you wish to store the sequential ID in different integer column, 
+By default, Sequenced uses the `sequential_id` column and assumes it already
+exists. If you wish to store the sequential ID in different integer column,
 simply specify the column name with the `column` option:
 
 ```ruby
@@ -108,7 +108,7 @@ acts_as_sequenced scope: :question_id, column: :my_sequential_id
 
 ### Starting the sequence at a specific number
 
-By default, Sequenced begins sequences with 1. To start at a different 
+By default, Sequenced begins sequences with 1. To start at a different
 integer, simply set the `start_at` option:
 
 ```ruby
@@ -137,7 +137,7 @@ acts_as_sequenced skip: lambda { |r| r.score == 0 }
 
 ## Example
 
-Suppose you have a question model that has many answers. This example 
+Suppose you have a question model that has many answers. This example
 demonstrates how to use Sequenced to enable access to the nested answer
 resource via its sequential ID.
 
@@ -151,7 +151,7 @@ end
 class Answer < ActiveRecord::Base
   belongs_to :question
   acts_as_sequenced scope: :question_id
-  
+
   # Automatically use the sequential ID in URLs
   def to_param
     self.sequential_id
