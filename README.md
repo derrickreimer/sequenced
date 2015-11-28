@@ -165,24 +165,16 @@ end
 
 # app/controllers/answers_controller.rb
 class AnswersController < ApplicationController
-  before_filter :load_question
-  before_filter :load_answer, only: [:show, :edit, :update, :destroy]
-  
-private
-
-  def load_question
+  def show
     @question = Question.find(params[:question_id])
-  end
-  
-  def load_answer
-    @answer = @question.answers.where(:sequential_id => params[:id]).first
+    @answer = @question.answers.find_by(sequential_id: params[:id])
   end
 end
 ```
 
 Now, answers are accessible via their sequential IDs:
 
-    http://example.com/questions/5/answers/1    # Good
+    http://example.com/questions/5/answers/1  # Good
 
 instead of by their primary keys:
 
