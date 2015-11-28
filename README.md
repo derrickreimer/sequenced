@@ -72,13 +72,13 @@ end
 
 ## Schema and data integrity
 
-The currently published version of this gem is not concurrent-safe. Undefined behavior will occur if you attempt to use this in production with multiple workers
+**This gem is only concurrent-safe for PostgreSQL databases**. For other database systems, unexpected behavior may occur if you attempt to create records concurrently.
 
-You can mitigate this somewhat by applying a unique index to your model. This will ensure that you can never have duplicate sequential ids within a scope, causing concurrent updates to instead raise a UniqueViolationException.
+You can mitigate this somewhat by applying a unique index to your sequential ID column (or a multicolumn unique index on sequential ID and scope columns, if you are using scopes). This will ensure that you can never have duplicate sequential IDs within a scope, causing concurrent updates to instead raise a uniqueness error at the database-level.
 
-It would also be a good idea to apply a not-null constraint to your sequential_id column as well if you never intend to skip it.
+It is also a good idea to apply a not-null constraint to your sequential ID column as well if you never intend to skip it.
 
-Here is an example migration for a model that has a sequential_id scoped to a burrow_id:
+Here is an example migration for a model that has a `sequential_id` scoped to a `burrow_id`:
 
 ```ruby
 # app/db/migrations/20151120190645_create_badgers.rb
@@ -89,7 +89,7 @@ class CreateBadgers < ActiveRecord::Migration
       t.integer :burrow_id
     end
 
-    add_index :badgers, [:sequential_id, :burrow_id], unique: true, name: 'unique_sequential_id_burrow_id'
+    add_index :badgers, [:sequential_id, :burrow_id], unique: true
   end
 end
 ```
