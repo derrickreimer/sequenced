@@ -9,3 +9,5 @@ env:
 
 before_script:
   - rake db:create
+
+sudo: false
