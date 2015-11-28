@@ -31,5 +31,29 @@ Rake::TestTask.new(:test) do |t|
   t.verbose = false
 end
 
-
 task :default => :test
+
+namespace :db do
+  task :create do
+    # File.expand_path is executed directory of generated Rails app
+    rakefile = File.expand_path('Rakefile', 'test/dummy/')
+    command = "rake -f '%s' db:create" % rakefile
+    sh(command)
+  end
+
+  task :drop do
+    # File.expand_path is executed directory of generated Rails app
+    rakefile = File.expand_path('Rakefile', 'test/dummy/')
+    command = "rake -f '%s' db:drop" % rakefile
+    sh(command)
+  end
+
+  namespace :test do
+    task :prepare do
+      # File.expand_path is executed directory of generated Rails app
+      rakefile = File.expand_path('Rakefile', 'test/dummy/')
+      command = "rake -f '%s' db:test:prepare" % rakefile
+      sh(command)
+    end
+  end
+end

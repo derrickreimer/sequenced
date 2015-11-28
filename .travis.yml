@@ -2,3 +2,10 @@ language: ruby
 rvm:
   - 1.9.3
   - ruby-head
+
+env:
+  - DB=sqlite
+  - DB=postgresql
+
+before_script:
+  - rake db:create
