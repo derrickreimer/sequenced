@@ -1,53 +1,32 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en-us">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta charset="UTF-8">
     <title>Sequenced by djreimer</title>
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
-    <script src="javascripts/respond.js"></script>
-    <!--[if lt IE 9]>
-      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-    <!--[if lt IE 8]>
-    <link rel="stylesheet" href="stylesheets/ie.css">
-    <![endif]-->
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
   </head>
   <body>
+    <section class="page-header">
+      <h1 class="project-name">Sequenced</h1>
+      <h2 class="project-tagline">Generate scoped sequential IDs for ActiveRecord models</h2>
+      <a href="https://github.com/djreimer/sequenced" class="btn">View on GitHub</a>
+      <a href="https://github.com/djreimer/sequenced/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/djreimer/sequenced/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
 
-      <div id="header">
-        <nav>
-          <li class="fork"><a href="https://github.com/djreimer/sequenced">Fork On GitHub</a></li>
-          <li class="downloads"><a href="https://github.com/djreimer/sequenced/zipball/master">ZIP</a></li>
-          <li class="downloads"><a href="https://github.com/djreimer/sequenced/tarball/master">TAR</a></li>
-          <li class="title">DOWNLOADS</li>
-        </nav>
-      </div><!-- end header -->
-
-    <div class="wrapper">
-
-      <section>
-        <div id="title">
-          <h1>Sequenced</h1>
-          <p>Generate scoped sequential IDs for ActiveRecord models</p>
-          <hr>
-          <span class="credits left">Project maintained by <a href="https://github.com/djreimer">djreimer</a></span>
-          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/#!/michigangraham">mattgraham</a></span>
-        </div>
-
-        <p>Sequenced is a simple Rails 3 plugin that generates scoped sequential IDs for 
+    <section class="main-content">
+      <p>Sequenced is a simple gem that generates scoped sequential IDs for 
 ActiveRecord models. This gem provides an <code>acts_as_sequenced</code> macro that 
-automatically assigns a unique, sequential ID to each record. This ID is 
+automatically assigns a unique, sequential ID to each record. The sequential ID is 
 not a replacement for the database primary key, but rather adds another way to 
 retrieve the object without exposing the primary key.</p>
 
-<p>Extracted from the <a href="https://guidekit.com">GuideKit</a> codebase.</p>
-
-<h2>Purpose</h2>
+<h2>
+<a id="purpose" class="anchor" href="#purpose" aria-hidden="true"><span class="octicon octicon-link"></span></a>Purpose</h2>
 
 <p>It's generally a bad practice to expose your primary keys to the world 
 in your URLs. However, it is often appropriate to number objects in sequence 
@@ -57,20 +36,17 @@ in your URLs. However, it is often appropriate to number objects in sequence
 to number answers sequentially for each individual question. You can achieve 
 this with Sequenced in one line of code:</p>
 
-<div class="highlight">
-<pre><span class="k">class</span> <span class="nc">Question</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">has_many</span> <span class="ss">:answers</span>
-<span class="k">end</span>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-en">Question<span class="pl-e"> &lt; ActiveRecord::Base</span></span>
+  has_many <span class="pl-c1">:answers</span>
+<span class="pl-k">end</span>
 
-<span class="k">class</span> <span class="nc">Answer</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">belongs_to</span> <span class="ss">:question</span>
-  <span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span>
-<span class="k">end</span>
-</pre>
-</div>
+<span class="pl-k">class</span> <span class="pl-en">Answer<span class="pl-e"> &lt; ActiveRecord::Base</span></span>
+  belongs_to <span class="pl-c1">:question</span>
+  acts_as_sequenced <span class="pl-c1">scope:</span> <span class="pl-c1">:question_id</span>
+<span class="pl-k">end</span></pre></div>
 
-
-<h2>Installation</h2>
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>Add the gem to your Gemfile:</p>
 
@@ -82,7 +58,8 @@ this with Sequenced in one line of code:</p>
 <pre><code>bundle install
 </code></pre>
 
-<h2>Usage</h2>
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
 <p>To add a sequential ID to a model, first add an integer column called
 <code>sequential_id</code> to the model (or you many name the column anything you
@@ -94,108 +71,131 @@ rake db:migrate
 
 <p>Then, call the <code>acts_as_sequenced</code> macro in your model class:</p>
 
-<div class="highlight">
-<pre><span class="k">class</span> <span class="nc">Answer</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">belongs_to</span> <span class="ss">:question</span>
-  <span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span>
-<span class="k">end</span>
-</pre>
-</div>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-en">Answer<span class="pl-e"> &lt; ActiveRecord::Base</span></span>
+  belongs_to <span class="pl-c1">:question</span>
+  acts_as_sequenced <span class="pl-c1">scope:</span> <span class="pl-c1">:question_id</span>
+<span class="pl-k">end</span></pre></div>
 
+<p>The <code>scope</code> option can be any attribute, but will typically be the foreign
+key of an associated parent object. You can even scope by multiple columns
+for polymorphic relationships:</p>
 
-<p>The <code>:scope</code> option can be any attribute, but will typically be the foreign
-key of an associated parent object.</p>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-k">class</span> <span class="pl-en">Answer<span class="pl-e"> &lt; ActiveRecord::Base</span></span>
+  belongs_to <span class="pl-c1">:questionable</span>, <span class="pl-c1">:polymorphic</span> =&gt; <span class="pl-c1">true</span>
+  acts_as_sequenced <span class="pl-c1">scope:</span> [<span class="pl-c1">:questionable_id</span>, <span class="pl-c1">:questionable_type</span>]
+<span class="pl-k">end</span></pre></div>
 
-<h2>Configuration</h2>
+<h2>
+<a id="schema-and-data-integrity" class="anchor" href="#schema-and-data-integrity" aria-hidden="true"><span class="octicon octicon-link"></span></a>Schema and data integrity</h2>
 
-<h3>Overriding the default sequential ID column</h3>
+<p><strong>This gem is only concurrent-safe for PostgreSQL databases</strong>. For other database systems, unexpected behavior may occur if you attempt to create records concurrently.</p>
+
+<p>You can mitigate this somewhat by applying a unique index to your sequential ID column (or a multicolumn unique index on sequential ID and scope columns, if you are using scopes). This will ensure that you can never have duplicate sequential IDs within a scope, causing concurrent updates to instead raise a uniqueness error at the database-level.</p>
+
+<p>It is also a good idea to apply a not-null constraint to your sequential ID column as well if you never intend to skip it.</p>
+
+<p>Here is an example migration for a model that has a <code>sequential_id</code> scoped to a <code>burrow_id</code>:</p>
+
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># app/db/migrations/20151120190645_create_badgers.rb</span>
+<span class="pl-k">class</span> <span class="pl-en">CreateBadgers<span class="pl-e"> &lt; ActiveRecord::Migration</span></span>
+  <span class="pl-k">def</span> <span class="pl-en">change</span>
+    create_table <span class="pl-c1">:badgers</span> <span class="pl-k">do </span>|<span class="pl-smi">t</span>|
+      t.integer <span class="pl-c1">:sequential_id</span>, <span class="pl-c1">null:</span> <span class="pl-c1">false</span>
+      t.integer <span class="pl-c1">:burrow_id</span>
+    <span class="pl-k">end</span>
+
+    add_index <span class="pl-c1">:badgers</span>, [<span class="pl-c1">:sequential_id</span>, <span class="pl-c1">:burrow_id</span>], <span class="pl-c1">unique:</span> <span class="pl-c1">true</span>
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
+
+<h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuration</h2>
+
+<h3>
+<a id="overriding-the-default-sequential-id-column" class="anchor" href="#overriding-the-default-sequential-id-column" aria-hidden="true"><span class="octicon octicon-link"></span></a>Overriding the default sequential ID column</h3>
 
 <p>By default, Sequenced uses the <code>sequential_id</code> column and assumes it already 
 exists. If you wish to store the sequential ID in different integer column, 
-simply specify the column name with the <code>:column</code> option:</p>
+simply specify the column name with the <code>column</code> option:</p>
 
-<div class="highlight">
-<pre><span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span><span class="p">,</span> <span class="ss">:column</span> <span class="o">=&gt;</span> <span class="ss">:my_sequential_id</span>
-</pre>
-</div>
+<div class="highlight highlight-source-ruby"><pre>acts_as_sequenced <span class="pl-c1">scope:</span> <span class="pl-c1">:question_id</span>, <span class="pl-c1">column:</span> <span class="pl-c1">:my_sequential_id</span></pre></div>
 
-
-<h3>Starting the sequence at a specific number</h3>
+<h3>
+<a id="starting-the-sequence-at-a-specific-number" class="anchor" href="#starting-the-sequence-at-a-specific-number" aria-hidden="true"><span class="octicon octicon-link"></span></a>Starting the sequence at a specific number</h3>
 
 <p>By default, Sequenced begins sequences with 1. To start at a different 
-integer, simply set the <code>:start_at</code> option:</p>
+integer, simply set the <code>start_at</code> option:</p>
 
-<div class="highlight">
-<pre><span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span><span class="p">,</span> <span class="ss">:start_at</span> <span class="o">=&gt;</span> <span class="mi">1000</span>
-</pre>
-</div>
+<div class="highlight highlight-source-ruby"><pre>acts_as_sequenced <span class="pl-c1">start_at:</span> <span class="pl-c1">1000</span></pre></div>
 
+<p>You may also pass a lambda to the <code>start_at</code> option:</p>
 
-<h3>Indexing the sequential ID column</h3>
+<div class="highlight highlight-source-ruby"><pre>acts_as_sequenced <span class="pl-c1">start_at:</span> lambda { |<span class="pl-smi">r</span>| r.computed_start_value }</pre></div>
+
+<h3>
+<a id="indexing-the-sequential-id-column" class="anchor" href="#indexing-the-sequential-id-column" aria-hidden="true"><span class="octicon octicon-link"></span></a>Indexing the sequential ID column</h3>
 
 <p>For optimal performance, it's a good idea to index the sequential ID column
 on sequenced models.</p>
 
-<h2>Example</h2>
+<h3>
+<a id="skipping-sequential-id-generation" class="anchor" href="#skipping-sequential-id-generation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Skipping sequential ID generation</h3>
+
+<p>If you'd like to skip generating a sequential ID under certain conditions,
+you may pass a lambda to the <code>skip</code> option:</p>
+
+<div class="highlight highlight-source-ruby"><pre>acts_as_sequenced <span class="pl-c1">skip:</span> lambda { |<span class="pl-smi">r</span>| r.score <span class="pl-k">==</span> <span class="pl-c1">0</span> }</pre></div>
+
+<h2>
+<a id="example" class="anchor" href="#example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Example</h2>
 
 <p>Suppose you have a question model that has many answers. This example 
 demonstrates how to use Sequenced to enable access to the nested answer
 resource via its sequential ID.</p>
 
-<div class="highlight">
-<pre><span class="c1"># app/models/question.rb</span>
-<span class="k">class</span> <span class="nc">Question</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">has_many</span> <span class="ss">:answers</span>
-<span class="k">end</span>
+<div class="highlight highlight-source-ruby"><pre><span class="pl-c"># app/models/question.rb</span>
+<span class="pl-k">class</span> <span class="pl-en">Question<span class="pl-e"> &lt; ActiveRecord::Base</span></span>
+  has_many <span class="pl-c1">:answers</span>
+<span class="pl-k">end</span>
 
-<span class="c1"># app/models/answer.rb</span>
-<span class="k">class</span> <span class="nc">Answer</span> <span class="o">&lt;</span> <span class="no">ActiveRecord</span><span class="o">::</span><span class="no">Base</span>
-  <span class="n">belongs_to</span> <span class="ss">:question</span>
-  <span class="n">acts_as_sequenced</span> <span class="ss">:scope</span> <span class="o">=&gt;</span> <span class="ss">:question_id</span>
+<span class="pl-c"># app/models/answer.rb</span>
+<span class="pl-k">class</span> <span class="pl-en">Answer<span class="pl-e"> &lt; ActiveRecord::Base</span></span>
+  belongs_to <span class="pl-c1">:question</span>
+  acts_as_sequenced <span class="pl-c1">scope:</span> <span class="pl-c1">:question_id</span>
 
-  <span class="c1"># Automatically use the sequential ID in URLs</span>
-  <span class="k">def</span> <span class="nf">to_param</span>
-    <span class="nb">self</span><span class="o">.</span><span class="n">sequential_id</span>
-  <span class="k">end</span>
-<span class="k">end</span>
+  <span class="pl-c"># Automatically use the sequential ID in URLs</span>
+  <span class="pl-k">def</span> <span class="pl-en">to_param</span>
+    <span class="pl-v">self</span>.sequential_id
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span>
 
-<span class="c1"># config/routes.rb</span>
-<span class="n">resources</span> <span class="ss">:questions</span>
-  <span class="n">resources</span> <span class="ss">:answers</span>
-<span class="k">end</span>
+<span class="pl-c"># config/routes.rb</span>
+resources <span class="pl-c1">:questions</span> <span class="pl-k">do</span>
+  resources <span class="pl-c1">:answers</span>
+<span class="pl-k">end</span>
 
-<span class="c1"># app/controllers/answers_controller.rb</span>
-<span class="k">class</span> <span class="nc">AnswersController</span> <span class="o">&lt;</span> <span class="no">ApplicationController</span>
-  <span class="n">before_filter</span> <span class="ss">:load_question</span>
-  <span class="n">before_filter</span> <span class="ss">:load_answer</span><span class="p">,</span> <span class="ss">:only</span> <span class="o">=&gt;</span> <span class="o">[</span><span class="ss">:show</span><span class="p">,</span> <span class="ss">:edit</span><span class="p">,</span> <span class="ss">:update</span><span class="p">,</span> <span class="ss">:destroy</span><span class="o">]</span>
-
-<span class="kp">private</span>
-
-  <span class="k">def</span> <span class="nf">load_question</span>
-    <span class="vi">@question</span> <span class="o">=</span> <span class="no">Question</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">params</span><span class="o">[</span><span class="ss">:question_id</span><span class="o">]</span><span class="p">)</span>
-  <span class="k">end</span>
-
-  <span class="k">def</span> <span class="nf">load_answer</span>
-    <span class="vi">@answer</span> <span class="o">=</span> <span class="vi">@question</span><span class="o">.</span><span class="n">answers</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="ss">:sequential_id</span> <span class="o">=&gt;</span> <span class="n">params</span><span class="o">[</span><span class="ss">:id</span><span class="o">]</span><span class="p">)</span><span class="o">.</span><span class="n">first</span>
-  <span class="k">end</span>
-<span class="k">end</span>
-</pre>
-</div>
-
+<span class="pl-c"># app/controllers/answers_controller.rb</span>
+<span class="pl-k">class</span> <span class="pl-en">AnswersController<span class="pl-e"> &lt; ApplicationController</span></span>
+  <span class="pl-k">def</span> <span class="pl-en">show</span>
+    <span class="pl-smi">@question</span> <span class="pl-k">=</span> <span class="pl-c1">Question</span>.find(params[<span class="pl-c1">:question_id</span>])
+    <span class="pl-smi">@answer</span> <span class="pl-k">=</span> <span class="pl-smi">@question</span>.answers.find_by(<span class="pl-c1">sequential_id:</span> params[<span class="pl-c1">:id</span>])
+  <span class="pl-k">end</span>
+<span class="pl-k">end</span></pre></div>
 
 <p>Now, answers are accessible via their sequential IDs:</p>
 
-<pre><code><a href="http://example.com/questions/5/answers/1">http://example.com/questions/5/answers/1</a>    # Good
+<pre><code>http://example.com/questions/5/answers/1  # Good
 </code></pre>
 
 <p>instead of by their primary keys:</p>
 
-<pre><code><a href="http://example.com/questions/5/answer/32454">http://example.com/questions/5/answer/32454</a>  # Bad
+<pre><code>http://example.com/questions/5/answer/32454  # Bad
 </code></pre>
 
-<h2>License</h2>
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
-<p>Copyright © 2012 Derrick Reimer</p>
+<p>Copyright © 2011-2015 Derrick Reimer</p>
 
 <p>Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
@@ -215,9 +215,15 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
-      </section>
 
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/djreimer/sequenced">Sequenced</a> is maintained by <a href="https://github.com/djreimer">djreimer</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+  
   </body>
 </html>
