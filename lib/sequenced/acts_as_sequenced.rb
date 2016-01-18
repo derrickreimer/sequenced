@@ -1,6 +1,6 @@
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/class/attribute_accessors'
-
+require 'pry'
 module Sequenced
   module ActsAsSequenced
     def self.included(base)
@@ -31,17 +31,24 @@ module Sequenced
       #
       # Returns nothing.
       def acts_as_sequenced(options = {})
-        cattr_accessor :sequenced_options
-        self.sequenced_options = options
+        unless defined?(sequenced_options)
+          include Sequenced::ActsAsSequenced::InstanceMethods
 
-        before_save :set_sequential_id
-        include Sequenced::ActsAsSequenced::InstanceMethods
+          cattr_accessor :sequenced_options
+          self.sequenced_options = []
+
+          before_save :set_sequential_ids
+        end
+
+        sequenced_options << options
       end
     end
 
     module InstanceMethods
-      def set_sequential_id
-        Sequenced::Generator.new(self, self.class.base_class.sequenced_options).set
+      def set_sequential_ids
+        self.class.base_class.sequenced_options.each do |options|
+          Sequenced::Generator.new(self, options).set
+        end
       end
     end
   end
