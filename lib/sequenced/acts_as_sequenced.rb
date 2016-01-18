@@ -1,6 +1,6 @@
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/class/attribute_accessors'
-require 'pry'
+
 module Sequenced
   module ActsAsSequenced
     def self.included(base)
