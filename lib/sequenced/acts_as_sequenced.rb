@@ -52,7 +52,11 @@ module Sequenced
         column_name = options[:column]
 
         if sequenced_options.any? {|options| options[:column] == column_name}
-          raise SequencedColumnExists, "tried to set #{column_name} as sequenced but there was already a definition here"
+          raise(SequencedColumnExists, <<-MSG.squish)
+            Tried to set #{column_name} as sequenced but there was already a
+            definition here. Did you accidentally call acts_as_sequenced
+            multiple times on the same column?
+          MSG
         else
           sequenced_options << options
         end
