@@ -5,8 +5,8 @@ module Sequenced
     def initialize(record, options = {})
       @record = record
       @scope = options[:scope]
-      @column = (options[:column] || :sequential_id).to_sym
-      @start_at = options[:start_at] || 1
+      @column = options[:column].to_sym
+      @start_at = options[:start_at]
       @skip = options[:skip]
     end
 

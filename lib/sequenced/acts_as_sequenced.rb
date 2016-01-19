@@ -3,6 +3,12 @@ require 'active_support/core_ext/class/attribute_accessors'
 
 module Sequenced
   module ActsAsSequenced
+    DEFAULT_OPTIONS = {
+      column: :sequential_id,
+      start_at: 1
+    }.freeze
+    SequencedColumnExists = Class.new(StandardError)
+
     def self.included(base)
       base.extend ClassMethods
     end
@@ -10,6 +16,8 @@ module Sequenced
     module ClassMethods
       # Public: Defines ActiveRecord callbacks to set a sequential ID scoped
       # on a specific class.
+      #
+      # Can be called multiple times to add hooks for different column names.
       #
       # options - The Hash of options for configuration:
       #           :scope    - The Symbol representing the columm on which the
@@ -40,7 +48,14 @@ module Sequenced
           before_save :set_sequential_ids
         end
 
-        sequenced_options << options
+        options = DEFAULT_OPTIONS.merge(options)
+        column_name = options[:column]
+
+        if sequenced_options.any? {|options| options[:column] == column_name}
+          raise SequencedColumnExists, "tried to set #{column_name} as sequenced but there as already a definition here"
+        else
+          sequenced_options << options
+        end
       end
     end
 
