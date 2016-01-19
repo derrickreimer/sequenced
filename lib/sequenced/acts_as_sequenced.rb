@@ -52,7 +52,7 @@ module Sequenced
         column_name = options[:column]
 
         if sequenced_options.any? {|options| options[:column] == column_name}
-          raise SequencedColumnExists, "tried to set #{column_name} as sequenced but there as already a definition here"
+          raise SequencedColumnExists, "tried to set #{column_name} as sequenced but there was already a definition here"
         else
           sequenced_options << options
         end
