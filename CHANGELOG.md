@@ -1,8 +1,14 @@
+3.1.0 (January 23, 2016)
+-------------------------
+
+* Allow multiple sequences on one record
+  (samphilipd, [#19](https://github.com/djreimer/sequenced/pull/19))
+
 3.0.0 (November 28, 2015)
 -------------------------
 
 * Make this gem thread-safe for PostgreSQL
-  (samphilipd, [#16](https://github.com/djreimer/sequenced/pull/16)) 
+  (samphilipd, [#16](https://github.com/djreimer/sequenced/pull/16))
 
 2.0.0 (October 24, 2014)
 ------------------------
