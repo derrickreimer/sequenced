@@ -70,6 +70,18 @@ class Answer < ActiveRecord::Base
 end
 ```
 
+Multiple sequences can be defined by using the macro multiple times:
+
+```ruby
+class Answer < ActiveRecord::Base
+  belongs_to :account
+  belongs_to :question
+
+  acts_as_sequenced column: :question_answer_number, scope: :question_id
+  acts_as_sequenced column: :account_answer_number, scope: :account_id
+end
+```
+
 ## Schema and data integrity
 
 **This gem is only concurrent-safe for PostgreSQL databases**. For other database systems, unexpected behavior may occur if you attempt to create records concurrently.
