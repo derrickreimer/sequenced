@@ -1,3 +1,9 @@
+3.1.1 (January 30, 2016)
+-------------------------
+
+* Rails 3 compatibility
+  (samphilipd, [#22](https://github.com/djreimer/sequenced/pull/19))
+
 3.1.0 (January 23, 2016)
 -------------------------
 
