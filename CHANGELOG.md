@@ -2,7 +2,7 @@
 -------------------------
 
 * Rails 3 compatibility
-  (samphilipd, [#22](https://github.com/djreimer/sequenced/pull/19))
+  (samphilipd, [#22](https://github.com/djreimer/sequenced/pull/22))
 
 3.1.0 (January 23, 2016)
 -------------------------
