@@ -166,7 +166,7 @@ class Answer < ActiveRecord::Base
 
   # Automatically use the sequential ID in URLs
   def to_param
-    self.sequential_id
+    self.sequential_id.to_s
   end
 end
 
