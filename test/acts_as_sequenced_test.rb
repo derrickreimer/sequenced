@@ -129,4 +129,40 @@ class ActsAsSequencedTest < ActiveSupport::TestCase
     assert_equal 1, zombie.sequential_id
     assert_equal 2, werewolf.sequential_id
   end
+
+  test "sequences in different scopes both begin at 1" do
+    question1 = Question.create
+    answer1 = question1.answers.create
+    answer2 = question1.answers.create
+
+    question2 = Question.create
+    answer3 = question2.answers.create
+
+    assert_equal answer1.sequential_id, 1
+    assert_equal answer2.sequential_id, 2
+    assert_equal answer3.sequential_id, 1
+  end
+
+  test "sequences in different scopes both begin at 1 with custom column" do
+    account1 = Account.create
+    user1 = account1.users.create
+    user2 = account1.users.create
+
+    account2 = Account.create
+    user3 = account2.users.create
+
+    assert_equal user1.custom_sequential_id, 1
+    assert_equal user2.custom_sequential_id, 2
+    assert_equal user3.custom_sequential_id, 1
+  end
+
+  test "sequences in different scopes follow start_at lambda" do
+    account1 = Account.create
+    account2 = Account.create
+
+    invoice1 = account1.invoices.create
+    invoice2 = account2.invoices.create
+
+    assert_equal invoice1.sequential_id, invoice2.sequential_id
+  end
 end
