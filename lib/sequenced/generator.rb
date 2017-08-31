@@ -11,7 +11,7 @@ module Sequenced
     end
 
     def set
-      return if id_set? || skip?
+      return if skip? || id_set?
       lock_table
       record.send(:"#{column}=", next_id)
     end
