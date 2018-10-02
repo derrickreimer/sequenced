@@ -1,6 +1,6 @@
 # Sequenced
 
-[![Build Status](https://travis-ci.org/djreimer/sequenced.svg)](https://travis-ci.org/djreimer/sequenced)
+[![Build Status](https://travis-ci.org/derrickreimer/sequenced.svg)](https://travis-ci.org/derrickreimer/sequenced)
 [![Code Climate](https://codeclimate.com/github/djreimer/sequenced.svg)](https://codeclimate.com/github/djreimer/sequenced)
 [![Gem Version](https://badge.fury.io/rb/sequenced.svg)](http://badge.fury.io/rb/sequenced)
 
