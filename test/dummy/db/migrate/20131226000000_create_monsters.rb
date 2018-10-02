@@ -1,4 +1,4 @@
-class CreateMonsters < ActiveRecord::Migration
+class CreateMonsters < ActiveRecord::Migration[4.2]
   def change
     create_table :monsters do |t|
       t.integer :sequential_id

@@ -1,4 +1,4 @@
-class CreateConcurrentBadgers < ActiveRecord::Migration
+class CreateConcurrentBadgers < ActiveRecord::Migration[4.2]
   def change
     create_table :concurrent_badgers do |t|
       t.integer :sequential_id, null: false
