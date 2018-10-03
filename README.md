@@ -106,6 +106,33 @@ class CreateBadgers < ActiveRecord::Migration
 end
 ```
 
+If you are adding a sequenced column to an existing table, you need to account for that in your migration.
+
+Here is an example migration that adds and sets the `sequential_id` column based on the current database records:
+```ruby
+# app/db/migrations/20151120190645_add_sequental_id_to_badgers.rb
+class AddSequentalIdToBadgers < ActiveRecord::Migration
+  add_column :badgers, :sequential_id, :integer
+
+  execute <<~SQL
+    UPDATE badgers
+    SET sequential_id = old_badgers.next_article_number
+    FROM (
+      SELECT id, ROW_NUMBER()
+      OVER(
+        PARTITION BY burrow_id
+        ORDER BY id
+      ) AS next_sequential_id
+      FROM badgers
+    ) old_badgers
+    WHERE badgers.id = old_badgers.id
+  SQL
+
+  change_column :badgers, :sequential_id, :integer, null: false
+  add_index :badgers, [:sequential_id, :burrow_id], unique: true
+end
+```
+
 ## Configuration
 
 ### Overriding the default sequential ID column
