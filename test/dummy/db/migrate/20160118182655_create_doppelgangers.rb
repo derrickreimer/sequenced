@@ -1,4 +1,4 @@
-class CreateDoppelgangers < ActiveRecord::Migration
+class CreateDoppelgangers < ActiveRecord::Migration[4.2]
   def change
     create_table :doppelgangers do |t|
       t.integer :sequential_id_one

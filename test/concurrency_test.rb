@@ -22,7 +22,7 @@ require 'test_helper'
 
 if ENV['DB'] == 'postgresql'
   class ConcurrencyTest < ActiveSupport::TestCase
-    self.use_transactional_fixtures = false
+    self.use_transactional_tests = false
 
     def setup
       ConcurrentBadger.delete_all
