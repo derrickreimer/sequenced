@@ -11,8 +11,7 @@ Gem::Specification.new do |s|
   s.summary     = "Generate scoped sequential IDs for ActiveRecord models"
   s.description = "Sequenced is a gem that generates scoped sequential IDs for ActiveRecord models."
 
-  s.files = `git ls-files`.split("\n")
-  s.test_files = Dir["test/**/*"]
+  s.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
 
   s.add_dependency "activesupport", ">= 3.0"
   s.add_dependency "activerecord", ">= 3.0"
