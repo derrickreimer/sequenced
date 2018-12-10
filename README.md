@@ -116,7 +116,7 @@ class AddSequentalIdToBadgers < ActiveRecord::Migration
 
   execute <<~SQL
     UPDATE badgers
-    SET sequential_id = old_badgers.next_article_number
+    SET sequential_id = old_badgers.next_sequential_id
     FROM (
       SELECT id, ROW_NUMBER()
       OVER(
