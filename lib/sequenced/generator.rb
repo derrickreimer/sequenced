@@ -39,7 +39,7 @@ module Sequenced
     def unique?(id)
       build_scope(*scope) do
         rel = base_relation
-        rel = rel.where("NOT id = ?", record.id) if record.persisted?
+        rel = rel.where.not(record.class.primary_key => record.id) if record.persisted?
         rel.where(column => id)
       end.count == 0
     end

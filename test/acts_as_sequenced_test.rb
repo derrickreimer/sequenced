@@ -2,19 +2,20 @@ require 'test_helper'
 
 # Test Models:
 #
-#   Answer       - :scope => :question_id
-#   Comment      - :scope => :question_id (with an AR default scope)
-#   Invoice      - :scope => :account_id, :start_at => 1000
-#   Product      - :scope => :account_id, :start_at => lambda { |r| r.computed_start_value }
-#   Order        - :scope => :non_existent_column
-#   User         - :scope => :account_id, :column => :custom_sequential_id
-#   Address      - :scope => :account_id ('sequential_id' does not exist)
-#   Email        - :scope => [:emailable_id, :emailable_type]
-#   Subscription - no options
-#   Rating       - :scope => :comment_id, skip: { |r| r.score == 0 }
-#   Monster      - no options
-#   Zombie       - STI, inherits from Monster
-#   Werewolf     - STI, inherits from Monster
+#   Answer               - :scope => :question_id
+#   Comment              - :scope => :question_id (with an AR default scope)
+#   Invoice              - :scope => :account_id, :start_at => 1000
+#   Product              - :scope => :account_id, :start_at => lambda { |r| r.computed_start_value }
+#   Order                - :scope => :non_existent_column
+#   User                 - :scope => :account_id, :column => :custom_sequential_id
+#   Address              - :scope => :account_id ('sequential_id' does not exist)
+#   Email                - :scope => [:emailable_id, :emailable_type]
+#   Subscription         - no options
+#   Rating               - :scope => :comment_id, skip: { |r| r.score == 0 }
+#   Monster              - no options
+#   Zombie               - STI, inherits from Monster
+#   Werewolf             - STI, inherits from Monster
+#   WithCustomPrimaryKey - non-default primary key
 
 class ActsAsSequencedTest < ActiveSupport::TestCase
   test "default start_at" do
@@ -164,5 +165,15 @@ class ActsAsSequencedTest < ActiveSupport::TestCase
     invoice2 = account2.invoices.create
 
     assert_equal invoice1.sequential_id, invoice2.sequential_id
+  end
+
+  test "sequences for model with non-standard primary key name" do
+    account = Account.create
+
+    record = WithCustomPrimaryKey.create(account: account)
+
+    assert record.persisted?
+    record.update_column(:sequential_id, nil)
+    assert record.save!
   end
 end
