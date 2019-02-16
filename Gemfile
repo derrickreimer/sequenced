@@ -9,7 +9,7 @@ gemspec
 gem "jquery-rails"
 
 group :development, :test do
-  gem 'sqlite3'
+  gem 'sqlite3', '~> 1.3.6'
   # gem 'mysql2'
   gem 'pg'
 end
