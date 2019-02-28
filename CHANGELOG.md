@@ -1,3 +1,7 @@
+Unreleased (Unreleased)
+
+* Fix: support non-default primary key columns (set via `primary_key=`)
+
 3.1.1 (January 30, 2016)
 -------------------------
 
