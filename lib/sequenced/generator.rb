@@ -54,7 +54,7 @@ module Sequenced
 
     def postgresql?
       defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
-        record.class.connection.instance_of?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
+        record.class.connection.kind_of?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
     end
 
     def base_relation
