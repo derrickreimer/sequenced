@@ -1,6 +1,6 @@
 language: ruby
 rvm:
-  - 2.2.3
+  - 2.4.1
 
 env:
   - DB=sqlite
@@ -9,4 +9,5 @@ env:
 before_script:
   - rake db:create
 
-sudo: false
+services:
+  - postgresql
