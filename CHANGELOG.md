@@ -1,6 +1,8 @@
-Unreleased (Unreleased)
+3.2.0 (January 29, 2020)
+------------------------
 
-* Fix: support non-default primary key columns (set via `primary_key=`)
+* Support non-default primary key columns (set via `primary_key=`) (#41)
+* Fix issue with Postgres adapter check when using a subclassed adapter (#42)
 
 3.1.1 (January 30, 2016)
 -------------------------
