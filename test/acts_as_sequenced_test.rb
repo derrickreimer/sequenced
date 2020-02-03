@@ -121,7 +121,7 @@ class ActsAsSequencedTest < ActiveSupport::TestCase
     assert_equal 1, rating.sequential_id
 
     rating = Rating.create(:comment_id => 1, :score => 0)
-    assert_equal nil, rating.sequential_id
+    assert_nil rating.sequential_id
   end
 
   test "STI" do
