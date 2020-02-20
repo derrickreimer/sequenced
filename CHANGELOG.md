@@ -1,8 +1,8 @@
 3.2.0 (January 29, 2020)
 ------------------------
 
-* Support non-default primary key columns (set via `primary_key=`) (#41)
-* Fix issue with Postgres adapter check when using a subclassed adapter (#42)
+* Support non-default primary key columns (set via `primary_key=`) ([#41](https://github.com/derrickreimer/sequenced/pull/41))
+* Fix issue with Postgres adapter check when using a subclassed adapter ([#42](https://github.com/derrickreimer/sequenced/pull/42))
 
 3.1.1 (January 30, 2016)
 -------------------------
