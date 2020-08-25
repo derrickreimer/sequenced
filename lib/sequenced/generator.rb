@@ -1,6 +1,6 @@
 module Sequenced
   class Generator
-    attr_reader :record, :scope, :column, :start_at, :skip
+    attr_reader :record, :scope, :column, :start_at, :skip, :secondary_column, :secondary_value_generator
 
     def initialize(record, options = {})
       @record = record
@@ -8,12 +8,15 @@ module Sequenced
       @column = options[:column].to_sym
       @start_at = options[:start_at]
       @skip = options[:skip]
+      @secondary_column = options.dig(:secondary, :column)
+      @secondary_value_generator = options.dig(:secondary, :value)
     end
 
     def set
       return if skip? || id_set?
       lock_table
       record.send(:"#{column}=", next_id)
+      set_secondary_sequence(next_id)
     end
 
     def id_set?
@@ -79,5 +82,10 @@ module Sequenced
       values.to_a.max
     end
 
+    def set_secondary_sequence(next_id)
+      return if secondary_column.blank? || secondary_value_generator.blank?
+
+      record.send(:"#{secondary_column}=", secondary_value_generator.call(record, next_id))
+    end
   end
 end
