@@ -29,6 +29,10 @@ module Sequenced
       #           :skip     - Skips the sequential ID generation when the lambda
       #                       expression evaluates to nil. Gets passed the
       #                       model object
+      #           :secondary
+      #             :column - Column for secondary index
+      #             :value  - lambda expression that you want to use to generate value for secondary index.
+      #                       Accepts two attributes: record and next_id
       #
       # Examples
       #
