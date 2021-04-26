@@ -12,7 +12,7 @@ module Sequenced
 
     def set
       return if skip? || id_set?
-      lock_table
+
       record.send(:"#{column}=", next_id)
     end
 
@@ -24,27 +24,38 @@ module Sequenced
       skip && skip.call(record)
     end
 
-    def next_id
-      next_id_in_sequence.tap do |id|
-        id += 1 until unique?(id)
-      end
+    def next_id(increment: true)
+      prepare_next_id
+
+      next_id_in_sequence(increment: increment)
     end
 
-    def next_id_in_sequence
-      start_at = self.start_at.respond_to?(:call) ? self.start_at.call(record) : self.start_at
-      return start_at unless last_record = find_last_record
-      max(last_record.send(column) + 1, start_at)
-    end
-
-    def unique?(id)
-      build_scope(*scope) do
-        rel = base_relation
-        rel = rel.where.not(record.class.primary_key => record.id) if record.persisted?
-        rel.where(column => id)
-      end.count == 0
+    def sequence_key
+      "#{record.class}:#{column}:#{scope_to_key(*scope)}"
     end
 
   private
+
+    def prepare_next_id
+      return if Redis.current.exists(sequence_key)
+
+      lock_table
+
+      start_at = self.start_at.respond_to?(:call) ? self.start_at.call(record) : self.start_at
+      last_id = find_last_record&.send(column) || 0
+
+      Redis.current.setnx(sequence_key, max(last_id, start_at - 1))
+    end
+
+    def next_id_in_sequence(increment:)
+      Redis.current.call(increment ? 'incr' : 'get', sequence_key)
+    end
+
+    def scope_to_key(*columns)
+      return unless columns.present?
+
+      columns.collect { |c| "#{c}:#{record.send(c.to_sym)}" }.join(':')
+    end
 
     def lock_table
       if postgresql?
