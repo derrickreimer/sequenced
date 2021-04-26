@@ -31,7 +31,7 @@ module Sequenced
     end
 
     def sequence_key
-      "#{record.class}:#{column}:#{scope_to_key(*scope)}"
+      "sequenced:#{record.class}:#{column}:#{scope_to_key(*scope)}"
     end
 
   private
@@ -44,7 +44,7 @@ module Sequenced
       start_at = self.start_at.respond_to?(:call) ? self.start_at.call(record) : self.start_at
       last_id = find_last_record&.send(column) || 0
 
-      Redis.current.setnx(sequence_key, max(last_id, start_at - 1))
+      Redis.current.set(sequence_key, max(last_id, start_at - 1), nx: true, ex: 86400)
     end
 
     def next_id_in_sequence(increment:)
