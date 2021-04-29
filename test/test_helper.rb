@@ -7,7 +7,13 @@ require "rails/test_help"
 
 Rails.backtrace_cleaner.remove_silencers!
 
-ActiveRecord::MigrationContext.new(File.expand_path("../dummy/db/migrate/", __FILE__)).up
+migrate_path = File.expand_path("../dummy/db/migrate/", __FILE__)
+
+if Gem::Version.new(Rails::VERSION::STRING) >= Gem::Version.new("6.0")
+  ActiveRecord::MigrationContext.new(migrate_path, ActiveRecord::SchemaMigration).up
+else
+  ActiveRecord::MigrationContext.new(migrate_path).up
+end
 
 # Load support files
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
