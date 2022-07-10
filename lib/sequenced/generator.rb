@@ -37,7 +37,7 @@ module Sequenced
   private
 
     def prepare_next_id
-      return if Redis.current.exists(sequence_key)
+      return if Redis.current.exists?(sequence_key)
 
       lock_table
 
