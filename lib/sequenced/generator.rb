@@ -21,7 +21,7 @@ module Sequenced
     end
 
     def skip?
-      skip && skip.call(record)
+      skip&.call(record)
     end
 
     def next_id
@@ -32,8 +32,11 @@ module Sequenced
 
     def next_id_in_sequence
       start_at = self.start_at.respond_to?(:call) ? self.start_at.call(record) : self.start_at
-      return start_at unless last_record = find_last_record
-      max(last_record.send(column) + 1, start_at)
+      if (last_record = find_last_record)
+        max(last_record.send(column) + 1, start_at)
+      else
+        start_at
+      end
     end
 
     def unique?(id)
@@ -44,7 +47,7 @@ module Sequenced
       end.count == 0
     end
 
-  private
+    private
 
     def lock_table
       if postgresql?
@@ -54,7 +57,7 @@ module Sequenced
 
     def postgresql?
       defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter) &&
-        record.class.connection.kind_of?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
+        record.class.connection.is_a?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
     end
 
     def base_relation
@@ -63,9 +66,9 @@ module Sequenced
 
     def find_last_record
       build_scope(*scope) do
-        base_relation.
-        where("#{column.to_s} IS NOT NULL").
-        order("#{column.to_s} DESC")
+        base_relation
+          .where("#{column} IS NOT NULL")
+          .order("#{column} DESC")
       end.first
     end
 
@@ -78,6 +81,5 @@ module Sequenced
     def max(*values)
       values.to_a.max
     end
-
   end
 end

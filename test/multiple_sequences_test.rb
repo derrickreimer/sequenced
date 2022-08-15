@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 class MultipleSequencesTest < ActiveSupport::TestCase
   test "works with simple multiple sequences" do

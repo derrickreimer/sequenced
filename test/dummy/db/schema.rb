@@ -11,7 +11,6 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema.define(version: 2019_02_16_124804) do
-
   create_table "accounts", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
@@ -138,5 +137,4 @@ ActiveRecord::Schema.define(version: 2019_02_16_124804) do
     t.integer "account_id"
     t.index ["account_id"], name: "index_with_custom_primary_keys_on_account_id"
   end
-
 end
