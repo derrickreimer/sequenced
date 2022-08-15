@@ -43,39 +43,11 @@ jobs:
 
       - name: Run tests
         env:
-          DATABASE_URL: "sqlite3:noticed_test"
+          DATABASE_URL: "sqlite3:test"
           RAILS_ENV: test
         run: |
           bundle exec rails db:test:prepare
           bundle exec rails test
-  mysql:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        ruby: ['2.7', '3.0', '3.1']
-        gemfile:
-          - rails_5_2
-          - rails_6
-          - rails_6_1
-          - rails_7
-          - rails_master
-        exclude:
-          - ruby: '3.0'
-            gemfile: 'rails_5_2'
-          - ruby: '3.1'
-            gemfile: 'rails_5_2'
-    env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/${{ matrix.gemfile }}.gemfile
-      BUNDLE_PATH_RELATIVE_TO_CWD: true
-
-    services:
-      mysql:
-        image: mysql:8
-        env:
-          MYSQL_ROOT_PASSWORD: password
-          MYSQL_DATABASE: test
-        ports: ['3306:3306']
-        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
       - uses: actions/checkout@master
@@ -101,7 +73,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        ruby: ['2.7', '3.0', '3.1']
+        ruby: ['2.4', '2.5', '2.6', '2.7', '3.0', '3.1']
         gemfile:
           - rails_5_2
           - rails_6
