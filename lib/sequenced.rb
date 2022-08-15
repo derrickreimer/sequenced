@@ -1,4 +1,6 @@
 require "sequenced/generator"
 require "sequenced/acts_as_sequenced"
 
-ActiveRecord::Base.send(:include, Sequenced::ActsAsSequenced)
+ActiveSupport.on_load(:active_record) do
+  include Sequenced::ActsAsSequenced
+end
