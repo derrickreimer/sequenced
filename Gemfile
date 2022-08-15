@@ -5,11 +5,16 @@ source "https://rubygems.org"
 # development dependencies will be added by default to the :development group.
 gemspec
 
+gem "appraisal"
+gem "standardrb"
 
 group :development, :test do
-  gem 'sqlite3', '~> 1.3.6'
+  gem 'sqlite3', '~> 1.4.4'
   # gem 'mysql2'
   gem 'pg'
+  gem 'net-imap'
+  gem 'net-pop'
+  gem 'net-smtp'
 end
 
 # Declare any dependencies that are still in development here instead of in

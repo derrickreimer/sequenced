@@ -1,29 +1,25 @@
 # example_travisci_multi/config/database.yml
-sqlite: &sqlite
+sqlite:
   adapter: sqlite3
   database: db/test.sqlite3
 
-mysql: &mysql
+mysql:
   adapter: mysql2
   username: root
   password:
 
-postgresql: &postgresql
+postgresql:
   adapter: postgresql
   username: postgres
   password:
   min_messages: ERROR
 
-defaults: &defaults
-  pool: 100
-  timeout: 5000
-  host: localhost
-  <<: *<%= ENV['DB'] || "sqlite" %>
-
 development:
   database: sequenced_test
-  <<: *defaults
+  adapter: sqlite3
+  database: db/development.sqlite3
 
 test:
   database: sequenced_test
-  <<: *defaults
+  adapter: sqlite3
+  database: db/test.sqlite3
