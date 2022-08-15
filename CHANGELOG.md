@@ -1,3 +1,7 @@
+* Drop support Ruby <= 2.5
+* Drop support Rails <= 5.2
+* Migrate from Travis CI to GitHub Actions
+
 3.2.0 (January 29, 2020)
 ------------------------
 
