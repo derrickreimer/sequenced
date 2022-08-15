@@ -1,4 +1,4 @@
-require 'test_helper'
+require "test_helper"
 
 # Test Models:
 #
@@ -20,7 +20,7 @@ require 'test_helper'
 #                      NOT NULL constraint on sequential_id,
 #                      UNIQUE constraint on sequential_id within concurrent_burrow_id scope
 
-if ENV['DB'] == 'postgresql'
+if ENV["DB"] == "postgresql"
   class ConcurrencyTest < ActiveSupport::TestCase
     self.use_transactional_tests = false
 
