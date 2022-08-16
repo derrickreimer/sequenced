@@ -95,7 +95,7 @@ GIT
 PATH
   remote: ..
   specs:
-    sequenced (3.2.0)
+    sequenced (4.0.0)
       activerecord (>= 3.0)
       activesupport (>= 3.0)
 

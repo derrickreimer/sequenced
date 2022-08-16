@@ -1,6 +1,10 @@
-* Drop support Ruby <= 2.5
-* Drop support Rails <= 5.2
+4.0.0 (August 16, 2022)
+------------------------
+
+* Drop official support Ruby 2.6 or older
+* Drop official support Rails 5.1 or older
 * Migrate from Travis CI to GitHub Actions
+* Include Sequenced when ActiveRecord loads ([#52](https://github.com/derrickreimer/sequenced/pull/52))
 
 3.2.0 (January 29, 2020)
 ------------------------
