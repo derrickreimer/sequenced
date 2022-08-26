@@ -31,6 +31,11 @@ class Answer < ActiveRecord::Base
 end
 ```
 
+## Requirements
+
+- Ruby 2.7+
+- Rails 5.2+
+
 ## Installation
 
 Add the gem to your Gemfile:
