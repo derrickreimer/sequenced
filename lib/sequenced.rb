@@ -1,3 +1,4 @@
+require "active_support"
 require "sequenced/generator"
 require "sequenced/acts_as_sequenced"
 

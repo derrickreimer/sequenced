@@ -1,0 +1,9 @@
+sqlite3:
+  adapter: sqlite3
+  database: test/db.sqlite3
+
+postgresql:
+  adapter: postgresql
+  database: sequenced_test
+  username: postgres
+  password: postgres

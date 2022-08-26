@@ -1,2 +1,0 @@
-class Werewolf < Monster
-end

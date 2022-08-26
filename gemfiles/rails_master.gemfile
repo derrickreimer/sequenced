@@ -4,14 +4,8 @@ source "https://rubygems.org"
 
 gem "appraisal"
 gem "standardrb"
-gem "rails", github: "rails/rails", branch: "main"
-
-group :development, :test do
-  gem "sqlite3", "~> 1.4.4"
-  gem "pg"
-  gem "net-imap"
-  gem "net-pop"
-  gem "net-smtp"
-end
+gem "sqlite3", "~> 1.4.4"
+gem "pg"
+gem "activerecord", github: "rails/rails", branch: "main"
 
 gemspec path: "../"
