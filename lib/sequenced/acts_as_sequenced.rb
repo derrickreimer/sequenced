@@ -1,17 +1,14 @@
-require "active_support/core_ext/hash/slice"
 require "active_support/core_ext/class/attribute_accessors"
 
 module Sequenced
   module ActsAsSequenced
+    extend ActiveSupport::Concern
+
     DEFAULT_OPTIONS = {
       column: :sequential_id,
       start_at: 1
     }.freeze
     SequencedColumnExists = Class.new(StandardError)
-
-    def self.included(base)
-      base.extend ClassMethods
-    end
 
     module ClassMethods
       # Public: Defines ActiveRecord callbacks to set a sequential ID scoped
@@ -40,13 +37,10 @@ module Sequenced
       # Returns nothing.
       def acts_as_sequenced(options = {})
         unless defined?(sequenced_options)
-          include Sequenced::ActsAsSequenced::InstanceMethods
-
-          mattr_accessor :sequenced_options, instance_accessor: false
-          self.sequenced_options = []
-
-          before_save :set_sequential_ids
+          mattr_accessor :sequenced_options, instance_accessor: false, default: []
         end
+
+        before_save :set_sequential_ids
 
         options = DEFAULT_OPTIONS.merge(options)
         column_name = options[:column]
@@ -63,11 +57,11 @@ module Sequenced
       end
     end
 
-    module InstanceMethods
-      def set_sequential_ids
-        self.class.base_class.sequenced_options.each do |options|
-          Sequenced::Generator.new(self, options).set
-        end
+    private
+
+    def set_sequential_ids
+      self.class.base_class.sequenced_options.each do |options|
+        Sequenced::Generator.new(self, options).set
       end
     end
   end
