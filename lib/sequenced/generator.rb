@@ -50,9 +50,9 @@ module Sequenced
     private
 
     def lock_table
-      if postgresql?
-        record.class.connection.execute("LOCK TABLE #{record.class.table_name} IN EXCLUSIVE MODE")
-      end
+      return unless postgresql?
+
+      build_scope(*scope) { base_relation.select(1).lock(true) }.load
     end
 
     def postgresql?
